@@ -1,0 +1,21 @@
+package com.qingru.graph.config;
+
+import com.arangodb.ArangoDB;
+import com.arangodb.springframework.annotation.EnableArangoRepositories;
+import com.arangodb.springframework.config.ArangoConfiguration;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@EnableArangoRepositories(basePackages = {"com.qingru.graph.arangoRepository"})
+public class ArangoConfig implements ArangoConfiguration {
+    @Override
+    public ArangoDB.Builder arango() {
+        return new ArangoDB.Builder().host("localhost", 8529)
+                .user("root").password("password");
+    }
+
+    @Override
+    public String database() {
+        return "poc";
+    }
+}
