@@ -23,6 +23,11 @@ public class PersonController {
         return personService.createPerson(personNode);
     }
 
+    @DeleteMapping("/arango/{id}")
+    public void deletePerson(@PathVariable("id") Long id) {
+        personService.deletePersonByPersonId(Long.toString(id));
+    }
+
     @GetMapping("/neo4j/{id}")
     public NPersonNode getNPersonById(@PathVariable("id") Long id) {
         return personService.getNPersonById(id);
@@ -32,5 +37,7 @@ public class PersonController {
     public NPersonNode createNPerson(@RequestBody NPersonNode nPersonNode) {
         return personService.createNPerson(nPersonNode);
     }
+
+
 
 }

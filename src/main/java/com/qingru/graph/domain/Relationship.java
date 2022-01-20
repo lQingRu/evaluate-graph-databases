@@ -4,17 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RelationshipHistory {
+public class Relationship {
 
     private String closeness;
-    private String description;
-    private int typeId;
-    private LocalDateTime started;
-    private LocalDateTime ended;
-
+    private Source source; // How does person A and person B know each other?
 }

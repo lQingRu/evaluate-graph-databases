@@ -23,9 +23,7 @@ public class NPersonNode {
     private int age;
     private String description;
     private String imageUrl;
-    private List<String> aliases;
     //    private List<Skill> skills;
     @Relationship
     private List<NPersonRelationshipEdge> relations;
-
 }

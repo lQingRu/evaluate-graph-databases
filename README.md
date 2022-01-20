@@ -19,16 +19,64 @@
   - Store
   - Query
 
+## Setting the stage
+### Entities
+- Person 
+    - `username`: String
+    - `age`: int
+    - `description`: String
+    - `imageUrl`: String
+    - `skills`: List of `Skill` objects
+- Relationship
+    - `source`: Source object
+    - `closeness`: String
+- Skill
+    - `skill`: String
+    - `description`: String
+    - `strength`: int
+    - `type`: String
+- Source
+    - `type`: String
+    - `description`: String
+    - `startDate`: LocalDateTime
 
-## TODO
-- [ ] Simple setup of Arango and Neo4j with Spring
-- [ ] Come up some test cases and objects
+### Edges
+Person relationship
+- 1 person can have a 1:M relationship with another person
+- Each relationship has the following information:
+    - `closeness`: How close is the relationship person A -> person B
+    - `source`: How did this relationship come about
+    
+### Evaluation Use Cases
+#### Simple CRUD
+Create 
+1. Add a person -> OK
+2. Add a skill of a person
+3. Add a specific relationship of a person
+
+Read
+1. Get all direct relationships of a person
+~~2. Get more information of a specific relationship~~
+
+Delete
+1. Remove a relationship
+2. Remove a person and thus all relationships linked to the person
+
+#### Traversals (Arbitrary number of hops over edge collections)
+1. Find 2nd tier people and their relationships 
+2. Find up to 3 tiers relationships
+
+#### Nested attributes
+- Nested attributes here are:
+   - `Source` in `Relationship`
+   - List of `Skill` in `Person`
 
 ## Resources
 ### Arango
 **Getting started on Arango**
 - https://www.arangodb.com/docs/stable/drivers/spring-data-reference-mapping.html
 - https://www.arangodb.com/docs/stable/aql/graphs-traversals.html
+- https://www.arangodb.com/tutorials/spring-data/part4-query-methods/
 - https://www.arangodb.com/docs/stable/tutorials.html
 
 **Issues**

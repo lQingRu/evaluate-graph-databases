@@ -27,13 +27,18 @@ public class RelationshipController {
         return ResponseEntity.ok(relationshipService.createPersonRelationship(relationshipEdge));
     }
 
-    @GetMapping("/arango/{id}")
-    public ResponseEntity<List<PersonNode>> getRelationshipsByPersonId(
+    @GetMapping("/arango/person/{id}")
+    public ResponseEntity<List<PersonRelationshipEdge>> getRelationshipsByPersonId(
             @PathVariable("id") String id, @Nullable @RequestParam("degree") Integer degree) {
         PersonNode personNode = personService.getPersonById(id);
-        List<PersonNode> edges =
+        List<PersonRelationshipEdge> edges =
                 relationshipService.getPersonRelationshipsByPerson(personNode, degree);
         return ResponseEntity.ok(edges);
+    }
+
+    @DeleteMapping("/arango/edge/{id}")
+    public void removeRelationshipByEdgeId(@PathVariable("id") String id) {
+        relationshipService.deletePersonRelationshipByEdgeId(id);
     }
 
     @PostMapping("/neo4j")

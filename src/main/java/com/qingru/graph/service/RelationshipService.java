@@ -30,7 +30,8 @@ public class RelationshipService {
         return personRelationshipRepository.save(edge);
     }
 
-    public List<PersonNode> getPersonRelationshipsByPerson(PersonNode personNode, Integer degree) {
+    public List<PersonRelationshipEdge> getPersonRelationshipsByPerson(PersonNode personNode,
+            Integer degree) {
         if (degree != null) {
             return personRelationshipRepository
                     .findPersonRelationshipsWithDegree(personNode.getId(), degree);
@@ -47,10 +48,28 @@ public class RelationshipService {
         NPersonNode toPerson =
                 nPersonNodeRepository.findNPersonNodesById(relationshipData.getToPersonId())
                         .orElse(null);
+        List<NPersonRelationshipEdge> existingRelations = fromPerson.getRelations();
         NPersonRelationshipEdge relation =
                 new NPersonRelationshipEdge(toPerson, relationshipData.getRelationshipType(),
-                        relationshipData.getRelationshipHistory());
-        fromPerson.setRelations(List.of(relation));
+                        relationshipData.getRelationship());
+        existingRelations.add(relation);
+        fromPerson.setRelations(existingRelations);
         return nPersonNodeRepository.save(fromPerson);
+    }
+
+    public void deletePersonRelationshipByEdgeId(String id) {
+        boolean exists = personRelationshipRepository.existsById(id);
+        if (exists) {
+            personRelationshipRepository.deleteById(id);
+        } else {
+            log.warn("Relationship id: {} not found to be deleted", id);
+        }
+    }
+
+    public void deletePersonRelationshipByPersonId(String id) {
+        boolean exists = personRelationshipRepository.findAllPersonRelationships(id).size() > 0;
+        if (exists) {
+            personRelationshipRepository.deletePersonRelationshipsByPersonId(id);
+        }
     }
 }

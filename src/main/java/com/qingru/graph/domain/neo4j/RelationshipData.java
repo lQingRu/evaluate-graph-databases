@@ -1,6 +1,6 @@
 package com.qingru.graph.domain.neo4j;
 
-import com.qingru.graph.domain.RelationshipHistory;
+import com.qingru.graph.domain.Relationship;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -16,5 +16,5 @@ public class RelationshipData {
     private Long toPersonId;
     @NonNull
     private String relationshipType;
-    private RelationshipHistory relationshipHistory;
+    private Relationship relationship;
 }

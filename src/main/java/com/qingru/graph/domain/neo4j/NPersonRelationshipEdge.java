@@ -1,6 +1,6 @@
 package com.qingru.graph.domain.neo4j;
 
-import com.qingru.graph.domain.RelationshipHistory;
+import com.qingru.graph.domain.Relationship;
 import lombok.Getter;
 import org.springframework.data.neo4j.core.schema.RelationshipId;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
@@ -18,13 +18,12 @@ public class NPersonRelationshipEdge {
 
     private String type;
 
-    private RelationshipHistory relationshipHistory;
+    private Relationship relationship;
 
-    public NPersonRelationshipEdge(NPersonNode person, String type,
-            RelationshipHistory relationshipHistory) {
+    public NPersonRelationshipEdge(NPersonNode person, String type, Relationship relationship) {
         this.person = person;
         this.type = type;
-        this.relationshipHistory = relationshipHistory;
+        this.relationship = relationship;
     }
 
 }

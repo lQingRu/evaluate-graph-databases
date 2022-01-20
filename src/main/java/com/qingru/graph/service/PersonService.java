@@ -4,8 +4,8 @@ import com.qingru.graph.arangoRepository.PersonNodeRepository;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.neo4j.NPersonNode;
 import com.qingru.graph.neo4jRepository.NPersonNodeRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,12 +14,11 @@ import java.util.ArrayList;
 @Service
 @Slf4j
 @Transactional
+@AllArgsConstructor
 public class PersonService {
 
-    @Autowired
+    private RelationshipService relationshipService;
     private PersonNodeRepository personNodeRepository;
-
-    @Autowired
     private NPersonNodeRepository nPersonNodeRepository;
 
     // [TEMP] This creates nodes in both Neo4j and Arango
@@ -48,6 +47,11 @@ public class PersonService {
 
     public NPersonNode getNPersonById(Long id) {
         return nPersonNodeRepository.findById(id).orElse(null);
+    }
+
+    public void deletePersonByPersonId(String id) {
+        relationshipService.deletePersonRelationshipByPersonId(id);
+        personNodeRepository.deleteById(id);
     }
 }
 

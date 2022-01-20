@@ -23,6 +23,9 @@ public class ArangoInitRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        personNodeRepository.deleteAll();
+        personRelationshipRepository.deleteAll();
+
         List<PersonNode> personCollection = createPersonCollection();
         personNodeRepository.saveAll(personCollection);
         Iterable<PersonNode> allPersons = personNodeRepository.findAll();
