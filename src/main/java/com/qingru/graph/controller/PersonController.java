@@ -38,6 +38,9 @@ public class PersonController {
         return personService.createNPerson(nPersonNode);
     }
 
-
+    @PutMapping("/neo4j/person/{id}")
+    public NPersonNode updateNPerson(@RequestBody NPersonNode nPersonNode) {
+        return personService.updateNPerson(nPersonNode);
+    }
 
 }

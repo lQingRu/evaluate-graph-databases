@@ -14,7 +14,7 @@ services:
     #      - ./logs:/logs
     #      - ./plugins:/plugins
     environment:
-      - NEO4J_AUTH=neo4j/test
+      - NEO4J_AUTH=neo4j/password
   arango:
     image: arangodb:3.8.4
     container_name: arango

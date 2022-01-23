@@ -1,13 +1,12 @@
 package com.qingru.graph.controller;
 
+import com.qingru.graph.domain.RelationshipData;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
 import com.qingru.graph.domain.neo4j.NPersonNode;
-import com.qingru.graph.domain.neo4j.RelationshipData;
 import com.qingru.graph.service.PersonService;
 import com.qingru.graph.service.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,30 +20,42 @@ public class RelationshipController {
     @Autowired
     PersonService personService;
 
-    @PostMapping("/arango")
-    public ResponseEntity<PersonRelationshipEdge> createRelationship(
-            @RequestBody PersonRelationshipEdge relationshipEdge) {
-        return ResponseEntity.ok(relationshipService.createPersonRelationship(relationshipEdge));
-    }
-
     @GetMapping("/arango/person/{id}")
-    public ResponseEntity<List<PersonRelationshipEdge>> getRelationshipsByPersonId(
-            @PathVariable("id") String id, @Nullable @RequestParam("degree") Integer degree) {
+    public List<PersonRelationshipEdge> getRelationshipsByPersonId(@PathVariable("id") String id,
+            @Nullable @RequestParam("degree") Integer degree) {
         PersonNode personNode = personService.getPersonById(id);
         List<PersonRelationshipEdge> edges =
                 relationshipService.getPersonRelationshipsByPerson(personNode, degree);
-        return ResponseEntity.ok(edges);
+        return edges;
     }
 
-    @DeleteMapping("/arango/edge/{id}")
+    @PostMapping("/arango")
+    public PersonRelationshipEdge createRelationship(
+            @RequestBody RelationshipData relationshipData) {
+        return relationshipService.createPersonRelationship(relationshipData);
+    }
+
+    @DeleteMapping("/arango/relationship/{id}")
     public void removeRelationshipByEdgeId(@PathVariable("id") String id) {
         relationshipService.deletePersonRelationshipByEdgeId(id);
     }
 
+    @GetMapping("/neo4j/person/{id}")
+    public List<Object> getNRelationshipsByPersonId(@PathVariable("id") String id,
+            @Nullable @RequestParam("degree") Integer degree) {
+        List<Object> edges = relationshipService.getNPersonRelationshipsByPersonId(id, degree);
+        return edges;
+    }
+
     @PostMapping("/neo4j")
-    public ResponseEntity<NPersonNode> createNRelationship(
+    public NPersonNode createNRelationship(@RequestBody RelationshipData relationshipData) {
+        return relationshipService.createNPersonRelationship(relationshipData);
+    }
+    
+    @PutMapping("/neo4j/relationship/{id}")
+    public void updateNRelationship(@PathVariable("id") String id,
             @RequestBody RelationshipData relationshipData) {
-        return ResponseEntity.ok(relationshipService.createNPersonRelationship(relationshipData));
+        relationshipService.updateNPersonRelationship(id, relationshipData);
     }
 
 }

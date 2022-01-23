@@ -3,10 +3,8 @@ package com.qingru.graph.domain.arango;
 import com.arangodb.springframework.annotation.Edge;
 import com.arangodb.springframework.annotation.From;
 import com.arangodb.springframework.annotation.To;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.qingru.graph.domain.Relationship;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 
 @Edge("personRelationship")
@@ -14,6 +12,7 @@ import org.springframework.data.annotation.Id;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PersonRelationshipEdge {
 
     @Id
@@ -25,6 +24,8 @@ public class PersonRelationshipEdge {
     private PersonNode toPersonNode;
 
     private String type;
+
+    private Relationship relationship;
 
     public PersonRelationshipEdge(PersonNode fromPersonNode, PersonNode toPersonNode) {
         this.fromPersonNode = fromPersonNode;
