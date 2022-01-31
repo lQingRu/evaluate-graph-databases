@@ -5,15 +5,25 @@ import com.qingru.graph.arangoRepository.PersonRelationshipRepository;
 import com.qingru.graph.domain.RelationshipData;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
-import com.qingru.graph.domain.neo4j.NPersonNode;
 import com.qingru.graph.domain.neo4j.NPersonRelationshipEdge;
+import com.qingru.graph.domain.neo4j.common.NPersonNode;
+import com.qingru.graph.domain.neo4j.common.NRelationshipData;
+import com.qingru.graph.domain.neo4j.optionOne.NFlattenedRelationshipEdge;
+import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
+import com.qingru.graph.domain.neo4j.optionOne.NPersonRelationshipResult;
+import com.qingru.graph.domain.neo4j.optionOne.NSourceNode;
+import com.qingru.graph.neo4jRepository.NPersonRelationship1Repository;
 import com.qingru.graph.neo4jRepository.NPersonRelationshipRepository;
+import com.qingru.graph.neo4jRepository.NSource1Repository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.neo4j.driver.internal.value.MapValue;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,6 +34,10 @@ public class RelationshipService {
     private PersonRelationshipRepository personRelationshipRepository;
     private NPersonRelationshipRepository nPersonRelationshipRepository;
     private PersonNodeRepository personNodeRepository;
+
+    //-------- OPTION 1
+    private NPersonRelationship1Repository nPersonRelationship1Repository;
+    private NSource1Repository nSource1Repository;
 
     public List<PersonRelationshipEdge> getPersonRelationshipsByPerson(PersonNode personNode,
             Integer degree) {
@@ -49,7 +63,8 @@ public class RelationshipService {
                                         relationshipData.getToPersonId())));
         PersonRelationshipEdge relation =
                 PersonRelationshipEdge.builder().fromPersonNode(fromPerson).toPersonNode(toPerson)
-                        .type(relationshipData.getRelationshipType()).build();
+                        .type(relationshipData.getRelationshipType())
+                        .relationshipMetadata(relationshipData.getRelationshipMetadata()).build();
         return personRelationshipRepository.save(relation);
     }
 
@@ -64,15 +79,11 @@ public class RelationshipService {
     }
 
     public NPersonNode createNPersonRelationship(RelationshipData relationshipData) {
-        NPersonNode fromPerson = nPersonRelationshipRepository
-                .findNPersonNodesById(relationshipData.getFromPersonId()).orElse(null);
-        NPersonNode toPerson =
-                nPersonRelationshipRepository.findNPersonNodesById(relationshipData.getToPersonId())
-                        .orElse(null);
+        NPersonNode fromPerson = getNPersonNodeById(relationshipData.getFromPersonId());
+        NPersonNode toPerson = getNPersonNodeById(relationshipData.getToPersonId());
         List<NPersonRelationshipEdge> existingRelations = fromPerson.getRelations();
         NPersonRelationshipEdge relation =
-                new NPersonRelationshipEdge(toPerson, relationshipData.getRelationshipType(),
-                        relationshipData.getRelationship());
+                new NPersonRelationshipEdge(toPerson, relationshipData.getRelationshipType());
         existingRelations.add(relation);
         fromPerson.setRelations(existingRelations);
         return nPersonRelationshipRepository.save(fromPerson);
@@ -98,5 +109,72 @@ public class RelationshipService {
         if (exists) {
             personRelationshipRepository.deletePersonRelationshipsByPersonId(id);
         }
+    }
+
+    private NPersonNode getNPersonNodeById(Long id) {
+        return nPersonRelationshipRepository.findNPersonNodesById(id).orElseThrow(
+                () -> new IllegalArgumentException(String.format("No person of id: %l", id)));
+    }
+
+    //-------- OPTION 1
+    public NPersonRelationshipResult createPersonRelationship1(
+            NRelationshipData nRelationshipData) {
+        //         Check if person A and B exist
+        NPersonNode1 fromPerson = getNPersonNode1ById(nRelationshipData.getFromPersonId());
+        NPersonNode1 toPerson = getNPersonNode1ById(nRelationshipData.getToPersonId());
+
+        // Create Source Node (if required)
+        NSourceNode nSourceNode =
+                nSource1Repository.save(nRelationshipData.getRelationship().getSource());
+
+        // Create relationship between person A and Source Node (Assumption here is multiple relationship can form between them, hence no need to check)
+        List<NFlattenedRelationshipEdge> fromPersonExistingRelations =
+                fromPerson.getRelationships();
+        NFlattenedRelationshipEdge fromPersonNewRelation =
+                new NFlattenedRelationshipEdge(nSourceNode,
+                        nRelationshipData.getRelationship().getRelationshipType(),
+                        nRelationshipData.getRelationship().getCloseness());
+        fromPersonExistingRelations.add(fromPersonNewRelation);
+        fromPerson.setRelationships(fromPersonExistingRelations);
+        nPersonRelationship1Repository.save(fromPerson);
+
+        // Create relationship between person B and Source Node (Assumption here is multiple relationship can form between them, hence no need to check)
+        List<NFlattenedRelationshipEdge> toPersonExistingRelations = toPerson.getRelationships();
+        NFlattenedRelationshipEdge toPersonNewRelation = new NFlattenedRelationshipEdge(nSourceNode,
+                nRelationshipData.getRelationship().getRelationshipType(),
+                nRelationshipData.getRelationship().getCloseness());
+        toPersonExistingRelations.add(toPersonNewRelation);
+        toPerson.setRelationships(toPersonExistingRelations);
+        nPersonRelationship1Repository.save(toPerson);
+
+        //        Return the created relationship
+        NPersonNode1 n = getPersonAndRelationshipBySourceIdAndRelationshipId(nSourceNode.getId(),
+                toPersonNewRelation.getId());
+        return null;
+    }
+
+    private NPersonNode1 getNPersonNode1ById(Long id) {
+        return nPersonRelationship1Repository.findNPersonNode1ById(id).orElseThrow(
+                () -> new IllegalArgumentException(String.format("No person of id: %l", id)));
+    }
+
+    //TODO: Have a better method name
+    public NPersonRelationshipResult getPersonsAndRelationshipByPersonId(Long id) {
+        Optional<Object> neo4jResult =
+                nPersonRelationship1Repository.findPersonAndRelationshipByPersonId(id);
+        if (neo4jResult.get() == null) {
+            return null;
+        }
+        MapValue mapValue = (MapValue) (neo4jResult.get());
+        Map<String, Object> map = mapValue.asMap();
+        NPersonRelationshipResult nPersonRelationshipResult = new NPersonRelationshipResult(map);
+        return nPersonRelationshipResult;
+    }
+
+    public NPersonNode1 getPersonAndRelationshipBySourceIdAndRelationshipId(Long sourceId,
+            Long relationshipId) {
+        return nPersonRelationship1Repository
+                .findPersonAndRelationshipBySourceIdAndRelationshipId(sourceId, relationshipId)
+                .orElseGet(null);
     }
 }

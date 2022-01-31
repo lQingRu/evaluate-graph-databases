@@ -1,5 +1,6 @@
-package com.qingru.graph.domain.neo4j;
+package com.qingru.graph.domain.neo4j.common;
 
+import com.qingru.graph.domain.neo4j.NPersonRelationshipEdge;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,10 +20,10 @@ public class NPersonNode {
     @Id
     @GeneratedValue
     private Long id;
-    private String username;
-    private int age;
     private String description;
+    private int age;
     private String imageUrl;
+    private String username;
     @Relationship
     private List<NPersonRelationshipEdge> relations;
 }

@@ -2,7 +2,9 @@ package com.qingru.graph.service;
 
 import com.qingru.graph.arangoRepository.PersonNodeRepository;
 import com.qingru.graph.domain.arango.PersonNode;
-import com.qingru.graph.domain.neo4j.NPersonNode;
+import com.qingru.graph.domain.neo4j.common.NPersonNode;
+import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
+import com.qingru.graph.neo4jRepository.NPersonRelationship1Repository;
 import com.qingru.graph.neo4jRepository.NPersonRelationshipRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ public class PersonService {
     private RelationshipService relationshipService;
     private PersonNodeRepository personNodeRepository;
     private NPersonRelationshipRepository nPersonRelationshipRepository;
+    private NPersonRelationship1Repository nPersonRelationship1Repository;
 
     // [TEMP] This creates nodes in both Neo4j and Arango
     public PersonNode createPerson(PersonNode personNode) {
@@ -45,7 +48,7 @@ public class PersonService {
         return personNodeRepository.findByUsername(username).orElse(null);
     }
 
-    public PersonNode getPersonById(String id) {
+    public PersonNode getNPerson1ById(String id) {
         return personNodeRepository.findById(id).orElse(null);
     }
 
@@ -56,6 +59,15 @@ public class PersonService {
     public void deletePersonByPersonId(String id) {
         relationshipService.deletePersonRelationshipByPersonId(id);
         personNodeRepository.deleteById(id);
+    }
+
+    //-------- OPTION 1
+    public NPersonNode1 getNPerson1ById(Long id) {
+        return nPersonRelationship1Repository.findNPersonNode1ById(id).orElseGet(null);
+    }
+
+    public NPersonNode1 createNPerson1(NPersonNode1 nPersonNode1) {
+        return nPersonRelationship1Repository.save(nPersonNode1);
     }
 }
 

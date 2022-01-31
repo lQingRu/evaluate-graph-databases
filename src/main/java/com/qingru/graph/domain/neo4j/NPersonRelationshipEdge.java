@@ -1,6 +1,6 @@
 package com.qingru.graph.domain.neo4j;
 
-import com.qingru.graph.domain.Relationship;
+import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import lombok.Getter;
 import org.springframework.data.neo4j.core.schema.RelationshipId;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
@@ -18,12 +18,12 @@ public class NPersonRelationshipEdge {
 
     private String type;
 
-    private Relationship relationship;
+    //    // Neo4j does not allow nested attributes
+    //    private Relationship relationship;
 
-    public NPersonRelationshipEdge(NPersonNode person, String type, Relationship relationship) {
+    public NPersonRelationshipEdge(NPersonNode person, String type) {
         this.person = person;
         this.type = type;
-        this.relationship = relationship;
     }
 
 }

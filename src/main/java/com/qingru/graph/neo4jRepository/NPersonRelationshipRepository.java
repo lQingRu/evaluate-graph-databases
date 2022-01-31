@@ -1,6 +1,6 @@
 package com.qingru.graph.neo4jRepository;
 
-import com.qingru.graph.domain.neo4j.NPersonNode;
+import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;

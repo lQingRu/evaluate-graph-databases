@@ -1,7 +1,8 @@
 package com.qingru.graph.controller;
 
 import com.qingru.graph.domain.arango.PersonNode;
-import com.qingru.graph.domain.neo4j.NPersonNode;
+import com.qingru.graph.domain.neo4j.common.NPersonNode;
+import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
 import com.qingru.graph.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class PersonController {
 
     @GetMapping("/arango/{id}")
     public PersonNode getPersonById(@PathVariable("id") String id) {
-        return personService.getPersonById(id);
+        return personService.getNPerson1ById(id);
     }
 
     @PostMapping("/arango/person")
@@ -42,5 +43,17 @@ public class PersonController {
     public NPersonNode updateNPerson(@RequestBody NPersonNode nPersonNode) {
         return personService.updateNPerson(nPersonNode);
     }
+
+    //-------- OPTION 1
+    @GetMapping("/neo4j/v1/person/{id}")
+    public NPersonNode1 getNPerson1ById(@PathVariable("id") Long id) {
+        return personService.getNPerson1ById(id);
+    }
+
+    @PostMapping("/neo4j/v1/person")
+    public NPersonNode1 createNPerson1(@RequestBody NPersonNode1 nPersonNode1) {
+        return personService.createNPerson1(nPersonNode1);
+    }
+
 
 }

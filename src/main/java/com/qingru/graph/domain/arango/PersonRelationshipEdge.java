@@ -3,7 +3,7 @@ package com.qingru.graph.domain.arango;
 import com.arangodb.springframework.annotation.Edge;
 import com.arangodb.springframework.annotation.From;
 import com.arangodb.springframework.annotation.To;
-import com.qingru.graph.domain.Relationship;
+import com.qingru.graph.domain.RelationshipMetadata;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
@@ -25,7 +25,7 @@ public class PersonRelationshipEdge {
 
     private String type;
 
-    private Relationship relationship;
+    private RelationshipMetadata relationshipMetadata;
 
     public PersonRelationshipEdge(PersonNode fromPersonNode, PersonNode toPersonNode) {
         this.fromPersonNode = fromPersonNode;
