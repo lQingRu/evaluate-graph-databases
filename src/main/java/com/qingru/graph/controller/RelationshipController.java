@@ -5,7 +5,7 @@ import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
-import com.qingru.graph.domain.neo4j.optionOne.NPersonRelationshipResult;
+import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
 import com.qingru.graph.service.PersonService;
 import com.qingru.graph.service.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,15 +62,20 @@ public class RelationshipController {
 
     //-------- OPTION 1
     @PostMapping("/neo4j/v1/relationship")
-    public NPersonRelationshipResult createNRelationship1(
-            @RequestBody NRelationshipData nRelationshipData) {
+    public NPersonNode1 createNRelationship1(@RequestBody NRelationshipData nRelationshipData) {
         return relationshipService.createPersonRelationship1(nRelationshipData);
     }
 
     // This API will also return relationship because we assume that whenever we want to retrieve
     // person object, we want to retrieve together with the relationship
     @GetMapping("/neo4j/v1/person/{id}")
-    public NPersonRelationshipResult getNPerson1ById(@PathVariable("id") Long id) {
-        return relationshipService.getPersonsAndRelationshipByPersonId(id);
+    public List<? extends Object> getNPerson1AndRelationshipsById(@PathVariable("id") Long id,
+            @Nullable @RequestParam("degree") Integer degree) {
+        // if degree is not specified, only return the direct relationship
+        if (degree == null || degree == 1) {
+            return relationshipService.getPersonsAndDirectRelationshipByPersonId(id);
+        } else {
+            return relationshipService.getPersonsAndRelationshipWithDegreeByPersonId(id, degree);
+        }
     }
 }

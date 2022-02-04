@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface NPersonRelationship1Repository extends Neo4jRepository<NPersonNode1, Long> {
@@ -21,9 +22,22 @@ public interface NPersonRelationship1Repository extends Neo4jRepository<NPersonN
             + "   relationshipMetadata: {\n" + "        closeness:r1.closeness,\n"
             + "        source:{\n" + "            type:source.type,\n"
             + "            description:source.description\n" + "        }\n" + "    } }")
-    Optional<Object> findPersonAndRelationshipByPersonId(@Param("id") Long id);
+    Optional<List<Object>> findPersonAndRelationshipByPersonId(@Param("id") Long id);
 
     @Query("MATCH (p:person1)-[r:metadataRelations]->(s:source) WHERE id(s) = $sourceId AND id(r)=$relationshipId RETURN p, collect(r), collect(s)")
     Optional<NPersonNode1> findPersonAndRelationshipBySourceIdAndRelationshipId(
             @Param("sourceId") Long sourceId, @Param("relationshipId") Long relationshipId);
+
+    // Because source node is the relationship metadata, it takes up 1 node. Hence degree=4 means 2 persons hop
+    @Query("MATCH (targetPerson:person1)-[targetRel:metadataRelations]->(:source)<-[:metadataRelations]-(directTargetPerson:person1)\n"
+            + "WHERE id(targetPerson)=$id\n" + "WITH targetPerson\n"
+            + "CALL apoc.path.subgraphAll(targetPerson, {\n"
+            + "    relationshipFilter: \"metadataRelations\",\n" + "    minLevel: 1,\n"
+            + "    maxLevel: $degree\n" + "})\n" + "YIELD relationships\n"
+            + "WITH [rel in relationships | id(rel)] as relIds\n"
+            + "MATCH (targetPerson:person1)-[targetRel:metadataRelations]->(:source)<-[:metadataRelations]-(directTargetPerson:person1)\n"
+            + "WHERE id(targetPerson)=$id\n"
+            + "MATCH (per:person1)-[rel:metadataRelations]->(source:source) WHERE id(rel) IN relIds AND id(per) = id(directTargetPerson) RETURN distinct per , collect(rel),collect(source)")
+    Optional<List<NPersonNode1>> findPersonAndRelationshipWithDegreeByPersonId(@Param("id") Long id,
+            @Param("degree") int degree);
 }

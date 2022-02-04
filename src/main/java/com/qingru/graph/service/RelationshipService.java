@@ -158,17 +158,29 @@ public class RelationshipService {
                 () -> new IllegalArgumentException(String.format("No person of id: %l", id)));
     }
 
-    //TODO: Have a better method name
-    public NPersonRelationshipResult getPersonsAndRelationshipByPersonId(Long id) {
-        Optional<Object> neo4jResult =
+    // May deprecate this method as getPersonsAndRelationshipWithDegreeByPersonId works for degree = 2/2 too and no need mapping
+    public List<NPersonRelationshipResult> getPersonsAndDirectRelationshipByPersonId(Long id) {
+        Optional<List<Object>> neo4jResult =
                 nPersonRelationship1Repository.findPersonAndRelationshipByPersonId(id);
         if (neo4jResult.get() == null) {
             return null;
         }
-        MapValue mapValue = (MapValue) (neo4jResult.get());
-        Map<String, Object> map = mapValue.asMap();
-        NPersonRelationshipResult nPersonRelationshipResult = new NPersonRelationshipResult(map);
-        return nPersonRelationshipResult;
+        List<NPersonRelationshipResult> personRelationshipResults = new ArrayList<>();
+        for (Object personRelationship : neo4jResult.get()) {
+            MapValue mapValue = (MapValue) personRelationship;
+            Map<String, Object> map = mapValue.asMap();
+            personRelationshipResults.add(new NPersonRelationshipResult(map));
+        }
+        return personRelationshipResults;
+    }
+
+    // This returns the direct person and the degree/2 relations from the direct persons
+    public List<NPersonNode1> getPersonsAndRelationshipWithDegreeByPersonId(Long sourceId,
+            int degree) {
+        List<NPersonNode1> neo4jResult = nPersonRelationship1Repository
+                .findPersonAndRelationshipWithDegreeByPersonId(sourceId, degree).orElseGet(null);
+
+        return neo4jResult;
     }
 
     public NPersonNode1 getPersonAndRelationshipBySourceIdAndRelationshipId(Long sourceId,
