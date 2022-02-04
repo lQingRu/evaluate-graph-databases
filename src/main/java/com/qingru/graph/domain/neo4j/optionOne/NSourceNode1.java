@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NSourceNode {
+public class NSourceNode1 {
 
     @Id
     @GeneratedValue

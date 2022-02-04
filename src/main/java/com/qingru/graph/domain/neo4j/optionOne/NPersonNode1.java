@@ -26,5 +26,5 @@ public class NPersonNode1 {
     private String description;
     private String imageUrl;
     @Relationship(type = "metadataRelations", direction = Relationship.Direction.OUTGOING)
-    private List<NFlattenedRelationshipEdge> relationships;
+    private List<NFlattenedRelationshipEdge1> relationships;
 }

@@ -7,18 +7,18 @@ import org.springframework.data.neo4j.core.schema.TargetNode;
 
 @RelationshipProperties
 @Getter
-public class NFlattenedRelationshipEdge {
+public class NFlattenedRelationshipEdge1 {
     @RelationshipId
     private Long id;
 
     // Person node -> Source node
     @TargetNode
-    private NSourceNode sourceNode;
+    private NSourceNode1 sourceNode;
 
     private String relationshipType;
     private String closeness;
 
-    public NFlattenedRelationshipEdge(NSourceNode sourceNode, String relationshipType,
+    public NFlattenedRelationshipEdge1(NSourceNode1 sourceNode, String relationshipType,
             String closeness) {
         this.sourceNode = sourceNode;
         this.relationshipType = relationshipType;

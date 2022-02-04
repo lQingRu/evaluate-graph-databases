@@ -14,6 +14,6 @@ public class NRelationship {
     private String closeness;
 
     // Nested relationship attributes
-    private NSourceNode source;
+    private NSourceNode1 source;
 
 }
