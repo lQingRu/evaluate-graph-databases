@@ -10,8 +10,6 @@ import java.util.Optional;
 
 public interface NPersonRelationship1Repository extends Neo4jRepository<NPersonNode1, Long> {
 
-
-    //-------- OPTION 1
     // This is similar to:     @Query("MATCH (p:person1)-[r:metadataRelations]->(s:source) WHERE id(p) = $id RETURN p, collect(r), collect(s)")
     Optional<NPersonNode1> findNPersonNode1ById(@Param("id") Long id);
 

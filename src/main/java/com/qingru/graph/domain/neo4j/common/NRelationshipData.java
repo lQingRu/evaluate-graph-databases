@@ -1,6 +1,6 @@
 package com.qingru.graph.domain.neo4j.common;
 
-import com.qingru.graph.domain.neo4j.optionOne.NRelationship;
+import com.qingru.graph.domain.RelationshipMetadata;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,5 +15,6 @@ public class NRelationshipData {
     @NonNull
     private Long toPersonId;
     @NonNull
-    private NRelationship relationship;
+    private String relationshipType;
+    private RelationshipMetadata relationshipMetadata;
 }

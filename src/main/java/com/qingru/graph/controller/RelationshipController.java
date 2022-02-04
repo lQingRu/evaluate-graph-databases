@@ -1,11 +1,12 @@
 package com.qingru.graph.controller;
 
-import com.qingru.graph.domain.RelationshipData;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
+import com.qingru.graph.domain.neo4j.optionOne.NRelationshipData1;
+import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
 import com.qingru.graph.service.PersonService;
 import com.qingru.graph.service.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ public class RelationshipController {
 
     @PostMapping("/arango")
     public PersonRelationshipEdge createRelationship(
-            @RequestBody RelationshipData relationshipData) {
-        return relationshipService.createPersonRelationship(relationshipData);
+            @RequestBody NRelationshipData NRelationshipData) {
+        return relationshipService.createPersonRelationship(NRelationshipData);
     }
 
     @DeleteMapping("/arango/relationship/{id}")
@@ -50,20 +51,20 @@ public class RelationshipController {
     }
 
     @PostMapping("/neo4j")
-    public NPersonNode createNRelationship(@RequestBody RelationshipData relationshipData) {
-        return relationshipService.createNPersonRelationship(relationshipData);
+    public NPersonNode createNRelationship(@RequestBody NRelationshipData NRelationshipData) {
+        return relationshipService.createNPersonRelationship(NRelationshipData);
     }
 
     @PutMapping("/neo4j/relationship/{id}")
     public void updateNRelationship(@PathVariable("id") String id,
-            @RequestBody RelationshipData relationshipData) {
-        relationshipService.updateNPersonRelationship(id, relationshipData);
+            @RequestBody NRelationshipData NRelationshipData) {
+        relationshipService.updateNPersonRelationship(id, NRelationshipData);
     }
 
     //-------- OPTION 1
     @PostMapping("/neo4j/v1/relationship")
-    public NPersonNode1 createNRelationship1(@RequestBody NRelationshipData nRelationshipData) {
-        return relationshipService.createPersonRelationship1(nRelationshipData);
+    public NPersonNode1 createNRelationship1(@RequestBody NRelationshipData1 nRelationshipData1) {
+        return relationshipService.createPersonRelationship1(nRelationshipData1);
     }
 
     // This API will also return relationship because we assume that whenever we want to retrieve
@@ -77,5 +78,27 @@ public class RelationshipController {
         } else {
             return relationshipService.getPersonsAndRelationshipWithDegreeByPersonId(id, degree);
         }
+    }
+
+    //-------- OPTION 2
+    @PostMapping("/neo4j/v2/relationship")
+    public NPersonNode2 createNRelationship2(@RequestBody NRelationshipData nRelationshipData) {
+        return relationshipService.createNPersonRelationship2(nRelationshipData);
+    }
+
+    //    @GetMapping("/neo4j/v2/person/{id}")
+    //    public NPersonNode2 getNRelationshipsByPersonId2(@PathVariable("id") String id,
+    //            @Nullable @RequestParam("degree") Integer degree) {
+    //        NPersonNode2 personNodeWithRelationships =
+    //                relationshipService.getNPersonRelationships2ByPersonId(id, degree);
+    //        return personNodeWithRelationships;
+    //    }
+
+    @GetMapping("/neo4j/v2/person/{id}")
+    public Object getNRelationshipsByPersonId2(@PathVariable("id") String id,
+            @Nullable @RequestParam("degree") Integer degree) {
+        Object personNodeWithRelationships =
+                relationshipService.getNPersonRelationships2ByPersonId(id, degree);
+        return personNodeWithRelationships;
     }
 }

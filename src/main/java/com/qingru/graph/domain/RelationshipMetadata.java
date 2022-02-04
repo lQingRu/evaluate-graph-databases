@@ -1,5 +1,6 @@
 package com.qingru.graph.domain;
 
+import com.qingru.graph.domain.neo4j.common.Source;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

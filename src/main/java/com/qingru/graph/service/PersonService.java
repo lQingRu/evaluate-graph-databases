@@ -4,8 +4,10 @@ import com.qingru.graph.arangoRepository.PersonNodeRepository;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
+import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
 import com.qingru.graph.neo4jRepository.NPersonRelationshipRepository;
 import com.qingru.graph.neo4jRepository.optionOne.NPersonRelationship1Repository;
+import com.qingru.graph.neo4jRepository.optionTwo.NPersonRelationship2Repository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class PersonService {
     private PersonNodeRepository personNodeRepository;
     private NPersonRelationshipRepository nPersonRelationshipRepository;
     private NPersonRelationship1Repository nPersonRelationship1Repository;
+    private NPersonRelationship2Repository nPersonRelationship2Repository;
 
     // [TEMP] This creates nodes in both Neo4j and Arango
     public PersonNode createPerson(PersonNode personNode) {
@@ -69,5 +72,15 @@ public class PersonService {
     public NPersonNode1 createNPerson1(NPersonNode1 nPersonNode1) {
         return nPersonRelationship1Repository.save(nPersonNode1);
     }
+
+    //-------- OPTION 2
+    public NPersonNode2 getNPerson2ById(Long id) {
+        return nPersonRelationship2Repository.findNPersonNode2ById2(id).orElseGet(null);
+    }
+
+    public NPersonNode2 createNPerson2(NPersonNode2 nPersonNode2) {
+        return nPersonRelationship2Repository.save(nPersonNode2);
+    }
+
 }
 
