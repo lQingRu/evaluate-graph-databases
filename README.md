@@ -12,7 +12,7 @@ Gitlab wiki pages in this repository consists of:
   - [Non-Technical comparisons](https://gitlab.com/qingru97/graph-databases/-/wikis/Evaluation-of-ArangoDB-and-Neo4J-(Non-Technical-Comparisons))
 
 ## Setup
-1. Run non-persistent data single node Neo4j and arangoDB on docker:
+1. Run single node Neo4j and arangoDB on docker:
 - username: `root`, password: `password`
 ```
 docker-compose up
@@ -33,7 +33,7 @@ docker-compose up
 - https://www.youtube.com/watch?v=4C4zqhXwCKs&t=926s&ab_channel=LearnCode.academy
 - [Neo4j's data on disk](https://neo4j.com/developer/kb/understanding-data-on-disk/#:~:text=Properties%20are%20stored%20as%20a,its%20start%20and%20end%20node.)
 
-**Issues**
+**Extra**
 - https://newbedev.com/storing-object-as-property-in-neo4j
 - Neo4j doesn't have a `GROUP BY`
     - e.g.: https://stackoverflow.com/questions/32389657/how-to-match-only-one-relationship-between-two-nodes
