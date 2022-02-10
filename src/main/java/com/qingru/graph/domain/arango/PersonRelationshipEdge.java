@@ -3,7 +3,7 @@ package com.qingru.graph.domain.arango;
 import com.arangodb.springframework.annotation.Edge;
 import com.arangodb.springframework.annotation.From;
 import com.arangodb.springframework.annotation.To;
-import com.qingru.graph.domain.RelationshipMetadata;
+import com.qingru.graph.domain.common.RelationshipMetadata;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 

@@ -1,6 +1,6 @@
 package com.qingru.graph.domain.neo4j.common;
 
-import com.qingru.graph.domain.RelationshipMetadata;
+import com.qingru.graph.domain.common.RelationshipMetadata;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;

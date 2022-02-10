@@ -4,7 +4,7 @@ import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.qingru.graph.domain.Skill;
+import com.qingru.graph.domain.common.Skill;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

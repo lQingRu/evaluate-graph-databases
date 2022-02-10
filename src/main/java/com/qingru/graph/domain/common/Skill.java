@@ -1,4 +1,4 @@
-package com.qingru.graph.domain;
+package com.qingru.graph.domain.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

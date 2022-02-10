@@ -1,8 +1,7 @@
 # Evaluating between Arango and Neo4j Graph Databases
 ## Purpose
 - This repository aims to do a targetted POC on Arango and Neo4j as a Graph data store
-- **_DISCLAIMER: Those Neo4j related that are not under options are all exploratory for basic understanding, hence no value-add to look at them_**
-
+- **_Disclaimer: Those Neo4j related that are not under options are all exploratory for basic understanding, hence no value-add to look at them_**
 
 ## Content [WIP]
 Gitlab wiki pages in this repository consists of: 
@@ -14,7 +13,7 @@ Gitlab wiki pages in this repository consists of:
   - [Non-Technical comparisons](https://gitlab.com/qingru97/graph-databases/-/wikis/Evaluation-of-ArangoDB-and-Neo4J-(Non-Technical-Comparisons))
 
 ## Setup
-1. Run single node Neo4j and arangoDB on docker:
+1. Run non-persistent data single node Neo4j and arangoDB on docker:
 - username: `root`, password: `password`
 ```
 docker-compose up

@@ -1,4 +1,4 @@
-package com.qingru.graph.domain;
+package com.qingru.graph.domain.common;
 
 import com.qingru.graph.domain.neo4j.common.Source;
 import lombok.AllArgsConstructor;

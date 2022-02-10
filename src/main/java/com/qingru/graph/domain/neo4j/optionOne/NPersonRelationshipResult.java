@@ -1,6 +1,6 @@
 package com.qingru.graph.domain.neo4j.optionOne;
 
-import com.qingru.graph.domain.RelationshipMetadata;
+import com.qingru.graph.domain.common.RelationshipMetadata;
 import com.qingru.graph.domain.neo4j.common.Source;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
