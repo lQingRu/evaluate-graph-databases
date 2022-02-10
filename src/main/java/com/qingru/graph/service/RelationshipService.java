@@ -7,11 +7,15 @@ import com.qingru.graph.domain.arango.PersonRelationshipEdge;
 import com.qingru.graph.domain.neo4j.NPersonRelationshipEdge;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
+import com.qingru.graph.domain.neo4j.common.Source;
 import com.qingru.graph.domain.neo4j.optionOne.*;
+import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
+import com.qingru.graph.domain.neo4j.optionThree.NRelationshipData3;
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
 import com.qingru.graph.neo4jRepository.NPersonRelationshipRepository;
 import com.qingru.graph.neo4jRepository.optionOne.NPersonRelationship1Repository;
 import com.qingru.graph.neo4jRepository.optionOne.NSource1Repository;
+import com.qingru.graph.neo4jRepository.optionThree.NPersonRelationship3Repository;
 import com.qingru.graph.neo4jRepository.optionTwo.NPersonRelationship2Repository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -40,6 +45,9 @@ public class RelationshipService {
 
     //-------- OPTION 2
     private NPersonRelationship2Repository nPersonRelationship2Repository;
+
+    //-------- OPTION 3
+    private NPersonRelationship3Repository nPersonRelationship3Repository;
 
     public List<PersonRelationshipEdge> getPersonRelationshipsByPerson(PersonNode personNode,
             Integer degree) {
@@ -214,6 +222,40 @@ public class RelationshipService {
                         relationshipData.getRelationshipMetadata().getSource().getType(),
                         relationshipData.getRelationshipMetadata().getSource().getDescription(),
                         relationshipData.getRelationshipMetadata().getSource().getStartDate(),
+                        relationshipData.getRelationshipType());
+    }
+
+    //-------- OPTION 3
+    public NPersonNode3 getNPersonRelationships3ByPersonId(Long personId, Integer degree) {
+        if (degree == null) {
+            degree = 1;
+        }
+        List<NPersonNode3> allPersonNodesLinkedToPerson =
+                nPersonRelationship3Repository.findPersonRelationshipsWithDegree(personId, degree);
+        return !allPersonNodesLinkedToPerson.isEmpty() ?
+                allPersonNodesLinkedToPerson.stream()
+                        .filter(personNode -> personNode.getId().equals(personId)).findFirst()
+                        .orElse(null) :
+                null;
+    }
+
+    public NPersonNode3 createNPersonRelationship3(NRelationshipData3 relationshipData) {
+        List<Source> sources = relationshipData.getRelationshipMetadata().getSource();
+
+        return nPersonRelationship3Repository
+                .createOutgoingRelationship(relationshipData.getFromPersonId(),
+                        relationshipData.getToPersonId(),
+                        relationshipData.getRelationshipMetadata().getCloseness(), sources.stream()
+                                .map(source -> source.getType() == null ? "" : source.getType())
+                                .filter(element -> element != null).collect(Collectors.toList()),
+                        sources.stream().map(source -> source.getDescription() == null ?
+                                "" :
+                                source.getDescription()).filter(element -> element != null)
+                                .collect(Collectors.toList()), sources.stream()
+                                .map(source -> source.getStartDate() == null ?
+                                        "" :
+                                        source.getStartDate().toString())
+                                .filter(element -> element != null).collect(Collectors.toList()),
                         relationshipData.getRelationshipType());
     }
 }

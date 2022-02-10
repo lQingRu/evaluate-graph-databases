@@ -25,7 +25,6 @@ public class NFlattenedRelationshipEdge2 {
 
     // Nested attributes of Source flattened
     // Here we assume a relationship only have 1 source
-    // TODO: Explore a relationship with more than 1 source
     private String sourceType;
     private String sourceDescription;
     private LocalDateTime sourceStartDate;

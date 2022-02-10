@@ -6,6 +6,8 @@ import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
 import com.qingru.graph.domain.neo4j.optionOne.NRelationshipData1;
+import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
+import com.qingru.graph.domain.neo4j.optionThree.NRelationshipData3;
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
 import com.qingru.graph.service.PersonService;
 import com.qingru.graph.service.RelationshipService;
@@ -90,5 +92,17 @@ public class RelationshipController {
     public NPersonNode2 getNRelationshipsByPersonId2(@PathVariable("id") Long id,
             @Nullable @RequestParam("degree") Integer degree) {
         return relationshipService.getNPersonRelationships2ByPersonId(id, degree);
+    }
+
+    //-------- OPTION 3
+    @PostMapping("/neo4j/v3/relationship")
+    public NPersonNode3 createNRelationship2(@RequestBody NRelationshipData3 nRelationshipData) {
+        return relationshipService.createNPersonRelationship3(nRelationshipData);
+    }
+
+    @GetMapping("/neo4j/v3/person/{id}")
+    public NPersonNode3 getNRelationshipsByPersonId3(@PathVariable("id") Long id,
+            @Nullable @RequestParam("degree") Integer degree) {
+        return relationshipService.getNPersonRelationships3ByPersonId(id, degree);
     }
 }

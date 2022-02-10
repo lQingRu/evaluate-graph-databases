@@ -3,6 +3,7 @@ package com.qingru.graph.controller;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
+import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
 import com.qingru.graph.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,5 +66,16 @@ public class PersonController {
     @PostMapping("/neo4j/v2/person")
     public NPersonNode2 createNPerson2(@RequestBody NPersonNode2 nPersonNode2) {
         return personService.createNPerson2(nPersonNode2);
+    }
+
+    //-------- OPTION 3
+    @GetMapping("/neo4j/v3/person/{id}")
+    public NPersonNode3 getNPerson3ById(@PathVariable("id") Long id) {
+        return personService.getNPerson3ById(id);
+    }
+
+    @PostMapping("/neo4j/v3/person")
+    public NPersonNode3 createNPerson3(@RequestBody NPersonNode3 nPersonNode2) {
+        return personService.createNPerson3(nPersonNode2);
     }
 }
