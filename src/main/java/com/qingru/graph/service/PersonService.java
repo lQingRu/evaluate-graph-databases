@@ -75,7 +75,7 @@ public class PersonService {
 
     //-------- OPTION 2
     public NPersonNode2 getNPerson2ById(Long id) {
-        return nPersonRelationship2Repository.findNPersonNode2ById2(id).orElseGet(null);
+        return nPersonRelationship2Repository.findNPersonNode2ById(id);
     }
 
     public NPersonNode2 createNPerson2(NPersonNode2 nPersonNode2) {

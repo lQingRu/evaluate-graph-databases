@@ -9,12 +9,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+// These ORMs here are implemented before nested attributes
+// Object because Neo4j returns its own attributes for relationship (i.e. `start`, `end`, `identity`, `properties (r/s properties)`,... - would map to Nodes/RelationshipEdge
 @Repository
 public interface NPersonRelationshipRepository extends Neo4jRepository<NPersonNode, Long> {
 
     Optional<NPersonNode> findNPersonNodesById(Long id);
 
-    @Query("MATCH (user:person)-[rel:RELATIONS*1..$maxDegree]-() WHERE ID(user)=$personId RETURN rel")
+    @Query("MATCH (user:person)-[rel:RELATIONS*1..3]-() WHERE ID(user)=$personId RETURN rel")
     List<Object> findPersonRelationshipsWithDegree(@Param("personId") String personId,
             @Param("maxDegree") int maxDegree);
 

@@ -8,7 +8,6 @@ import com.qingru.graph.domain.neo4j.NPersonRelationshipEdge;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
 import com.qingru.graph.domain.neo4j.optionOne.*;
-import com.qingru.graph.domain.neo4j.optionTwo.NFlattenedRelationshipEdge2;
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
 import com.qingru.graph.neo4jRepository.NPersonRelationshipRepository;
 import com.qingru.graph.neo4jRepository.optionOne.NPersonRelationship1Repository;
@@ -194,38 +193,27 @@ public class RelationshipService {
     }
 
     //-------- OPTION 2
-    public Object getNPersonRelationships2ByPersonId(String personId, Integer degree) {
-        if (degree != null) {
-            Object o = nPersonRelationship2Repository
-                    .findPersonRelationshipsWithDegree(personId, degree);
-            return o;
-        } else {
-            Object o =
-                    nPersonRelationship2Repository.findPersonRelationshipsWithDegree(personId, 1);
-            return o;
+    public NPersonNode2 getNPersonRelationships2ByPersonId(Long personId, Integer degree) {
+        if (degree == null) {
+            degree = 1;
         }
+        List<NPersonNode2> allPersonNodesLinkedToPerson =
+                nPersonRelationship2Repository.findPersonRelationshipsWithDegree(personId, degree);
+        return !allPersonNodesLinkedToPerson.isEmpty() ?
+                allPersonNodesLinkedToPerson.stream()
+                        .filter(personNode -> personNode.getId().equals(personId)).findFirst()
+                        .orElse(null) :
+                null;
     }
 
     public NPersonNode2 createNPersonRelationship2(NRelationshipData relationshipData) {
-        NPersonNode2 fromPerson = nPersonRelationship2Repository
-                .findNPersonNode2ById2(relationshipData.getFromPersonId()).orElseGet(null);
-        NPersonNode2 toPerson = nPersonRelationship2Repository
-                .findNPersonNode2ById2(relationshipData.getToPersonId()).orElseGet(null);
-        if (fromPerson == null || toPerson == null) {
-            throw new IllegalArgumentException("Person(s) does not exist");
-        }
-
-        List<NFlattenedRelationshipEdge2> existingOutgoingRelationships =
-                fromPerson.getOutgoingRelationships();
-        NFlattenedRelationshipEdge2 newOutgoingRelationship = NFlattenedRelationshipEdge2.builder()
-                .closeness(relationshipData.getRelationshipMetadata().getCloseness())
-                .relationshipType(relationshipData.getRelationshipType())
-                .sourceType(relationshipData.getRelationshipMetadata().getSource().getType())
-                .sourceStartDate(null).sourceDescription(
-                        relationshipData.getRelationshipMetadata().getSource().getDescription())
-                .targetPersonNode(toPerson).build();
-        existingOutgoingRelationships.add(newOutgoingRelationship);
-        fromPerson.setOutgoingRelationships(existingOutgoingRelationships);
-        return nPersonRelationship2Repository.save(fromPerson);
+        return nPersonRelationship2Repository
+                .createOutgoingRelationship(relationshipData.getFromPersonId(),
+                        relationshipData.getToPersonId(),
+                        relationshipData.getRelationshipMetadata().getCloseness(),
+                        relationshipData.getRelationshipMetadata().getSource().getType(),
+                        relationshipData.getRelationshipMetadata().getSource().getDescription(),
+                        relationshipData.getRelationshipMetadata().getSource().getStartDate(),
+                        relationshipData.getRelationshipType());
     }
 }

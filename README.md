@@ -1,6 +1,8 @@
 # Evaluating between Arango and Neo4j Graph Databases
 ## Purpose
 - This repository aims to do a targetted POC on Arango and Neo4j as a Graph data store
+- **_DISCLAIMER: Those Neo4j related that are not under options are all exploratory for basic understanding, hence no value-add to look at them_**
+
 
 ## Content [WIP]
 Gitlab wiki pages in this repository consists of: 

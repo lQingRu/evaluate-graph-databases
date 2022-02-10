@@ -5,23 +5,44 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface NPersonRelationship2Repository extends Neo4jRepository<NPersonNode2, Long> {
 
-    @Query("MATCH (fromPerson:person2)-[rel:metadataRelations]-(toPerson:person2) WHERE ID(fromPerson)=$id RETURN fromPerson, collect(rel), collect(toPerson)")
-    Optional<NPersonNode2> findNPersonNode2ById2(@Param("id") Long id);
+    // Needs to use custom query instead of ORM's findNPersonNode2ById to prevent infinite loop
+    // This however only returns just the person node, without relationships
+    // To return with relationships, use findPersonRelationshipsWithDegree()
+    @Query("MATCH (fromPerson:person2) WHERE ID(fromPerson)=$id RETURN fromPerson")
+    NPersonNode2 findNPersonNode2ById(@Param("id") Long id);
 
-    // Problem is: Only 1 directional mapping relationship if we want to do mapping unless to indicate 2 relationship edge directions but caused infinite loop
-    //    @Query("MATCH (fromPerson:person2)-[rel:metadataRelations*1..$maxDegree]-(toPerson:person2) WHERE ID(fromPerson)=$personId RETURN fromPerson, collect(rel), collect(toPerson)")
-    //    NPersonNode2 findPersonRelationshipsWithDegree(@Param("personId") String personId,
-    //            @Param("maxDegree") int maxDegree);
-
-    // [TEST] to see if by returning object type would capture all relationships
-    @Query("MATCH (fromPerson:person2)-[rel:metadataRelations*1..$maxDegree]-(toPerson:person2) WHERE ID(fromPerson)=$personId RETURN fromPerson, rel, toPerson")
-    Object findPersonRelationshipsWithDegree(@Param("personId") String personId,
+    // Set uniqueness to RELATIONSHIP_GLOBAL prevents infinite loop and ensures all relationships are covered
+    // For uniqueness types, see: https://neo4j.com/labs/apoc/4.4/graph-querying/expand-paths-config/#path-expander-paths-config-config-uniqueness
+    @Query("MATCH (p:person2) WHERE ID(p)=$personId" + " CALL apoc.path.expandConfig(p, {\n"
+            + "\trelationshipFilter: \"metadataRelations\",\n" + "    minLevel: 1,\n"
+            + "    maxLevel: $maxDegree\n" + ", uniqueness: \"RELATIONSHIP_GLOBAL\"})\n"
+            + "YIELD path\n" + "WITH path\n" + "WITH apoc.path.elements(path) AS elements\n"
+            + "UNWIND range(0, size(elements)-2) AS index\n" + "WITH elements, index\n"
+            + "WHERE index %2 = 0\n"
+            + "WITH distinct  elements[index] AS subject, elements[index+1] AS predicate, elements[index+2] AS object\n"
+            + "RETURN subject, collect(predicate), collect(object)")
+    List<NPersonNode2> findPersonRelationshipsWithDegree(@Param("personId") Long personId,
             @Param("maxDegree") int maxDegree);
 
-    //    @Query("MATCH (u1)-[rel:metadataRelations]-(u2) WHERE ID(u1)=$personId RETURN {fromPerson: u1, toPerson: u2, relationshipType: rel.type}")
-    //    List<Object> findAllPersonRelationships(@Param("personId") int personId);
+    // [ISSUE] Does not take in NFlattenedRelationshipEdge2 and access the fields, hence requires to pass in individually
+    // [LIMITATION] Need to do full traversal to fully return TargetNode + Source relationships, consider returning relationship id instead
+    // [CONSIDER] Using CREATE, then MERGE (merge existing or create) only for UPDATE Relationships
+    @Query("MATCH (fromPerson:person2),\n" + "  (toPerson:person2)\n"
+            + "WHERE ID(fromPerson)=$fromPersonId AND ID(toPerson)=$toPersonId\n"
+            + "MERGE (fromPerson)-[r:metadataRelations]->(toPerson)\n"
+            + "SET r.closeness=$closeness, r.sourceType=$sourceType, "
+            + "r.sourceDescription=$sourceDescription, r.sourceStartDate=$sourceStartDate, "
+            + "r.relationshipType=$relationshipType RETURN distinct fromPerson, collect(r), collect(toPerson)")
+    NPersonNode2 createOutgoingRelationship(@Param("fromPersonId") Long fromPersonId,
+            @Param("toPersonId") Long toPersonId, @Param("closeness") String closeness,
+            @Param("sourceType") String sourceType,
+            @Param("sourceDescription") String sourceDescription,
+            @Param("sourceStartDate") LocalDateTime sourceStartDate,
+            @Param("relationshipType") String relationshipType);
+
 }

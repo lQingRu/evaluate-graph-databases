@@ -86,19 +86,9 @@ public class RelationshipController {
         return relationshipService.createNPersonRelationship2(nRelationshipData);
     }
 
-    //    @GetMapping("/neo4j/v2/person/{id}")
-    //    public NPersonNode2 getNRelationshipsByPersonId2(@PathVariable("id") String id,
-    //            @Nullable @RequestParam("degree") Integer degree) {
-    //        NPersonNode2 personNodeWithRelationships =
-    //                relationshipService.getNPersonRelationships2ByPersonId(id, degree);
-    //        return personNodeWithRelationships;
-    //    }
-
     @GetMapping("/neo4j/v2/person/{id}")
-    public Object getNRelationshipsByPersonId2(@PathVariable("id") String id,
+    public NPersonNode2 getNRelationshipsByPersonId2(@PathVariable("id") Long id,
             @Nullable @RequestParam("degree") Integer degree) {
-        Object personNodeWithRelationships =
-                relationshipService.getNPersonRelationships2ByPersonId(id, degree);
-        return personNodeWithRelationships;
+        return relationshipService.getNPersonRelationships2ByPersonId(id, degree);
     }
 }
