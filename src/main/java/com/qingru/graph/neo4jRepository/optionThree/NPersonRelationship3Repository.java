@@ -41,6 +41,4 @@ public interface NPersonRelationship3Repository extends Neo4jRepository<NPersonN
             @Param("sourceDescription") List<String> sourceDescription,
             @Param("sourceStartDate") List<String> sourceStartDate,
             @Param("relationshipType") String relationshipType);
-
-
 }

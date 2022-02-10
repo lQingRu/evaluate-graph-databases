@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
-//TODO: Solely for client to create relationship
 @Data
 @AllArgsConstructor
 public class NRelationshipData {

@@ -24,16 +24,17 @@ public interface NPersonRelationship2Repository extends Neo4jRepository<NPersonN
             + "YIELD path\n" + "WITH path\n" + "WITH apoc.path.elements(path) AS elements\n"
             + "UNWIND range(0, size(elements)-2) AS index\n" + "WITH elements, index\n"
             + "WHERE index %2 = 0\n"
-            + "WITH distinct  elements[index] AS subject, elements[index+1] AS predicate, elements[index+2] AS object\n"
-            + "RETURN subject, collect(predicate), collect(object)")
+            + "WITH distinct  elements[index] AS subject, elements[index+1] AS relationship, elements[index+2] AS object\n"
+            + "RETURN subject, collect(relationship), collect(object)")
     List<NPersonNode2> findPersonRelationshipsWithDegree(@Param("personId") Long personId,
             @Param("maxDegree") int maxDegree);
 
     // [ISSUE] Does not take in NFlattenedRelationshipEdge2 and access the fields, hence requires to pass in individually
     // [LIMITATION] Need to do full traversal to fully return TargetNode + Source relationships, consider returning relationship id instead
     // [CONSIDER] Using CREATE, then MERGE (merge existing or create) only for UPDATE Relationships
-    @Query("MATCH (fromPerson:person2),\n" + "  (toPerson:person2)\n"
-            + "WHERE ID(fromPerson)=$fromPersonId AND ID(toPerson)=$toPersonId\n"
+    @Query("MATCH (fromPerson:person2)\n" + "WHERE ID(fromPerson)=$fromPersonId \n"
+            + "WITH fromPerson\n" + "MATCH (toPerson:person2)\n"
+            + "WHERE ID(toPerson)=$toPersonId\n"
             + "MERGE (fromPerson)-[r:metadataRelations]->(toPerson)\n"
             + "SET r.closeness=$closeness, r.sourceType=$sourceType, "
             + "r.sourceDescription=$sourceDescription, r.sourceStartDate=$sourceStartDate, "
