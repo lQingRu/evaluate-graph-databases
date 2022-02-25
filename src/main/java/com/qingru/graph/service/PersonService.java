@@ -3,12 +3,16 @@ package com.qingru.graph.service;
 import com.qingru.graph.arangoRepository.PersonNodeRepository;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
+import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5;
+import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5List;
 import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4;
 import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4List;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
 import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
 import com.qingru.graph.neo4jRepository.NPersonRelationshipRepository;
+import com.qingru.graph.neo4jRepository.optionFive.NPersonRelationship5ListRepository;
+import com.qingru.graph.neo4jRepository.optionFive.NPersonRelationship5Repository;
 import com.qingru.graph.neo4jRepository.optionFour.NPersonRelationship4ListRepository;
 import com.qingru.graph.neo4jRepository.optionFour.NPersonRelationship4Repository;
 import com.qingru.graph.neo4jRepository.optionOne.NPersonRelationship1Repository;
@@ -35,6 +39,8 @@ public class PersonService {
     private NPersonRelationship3Repository nPersonRelationship3Repository;
     private NPersonRelationship4Repository nPersonRelationship4Repository;
     private NPersonRelationship4ListRepository nPersonRelationship4ListRepository;
+    private NPersonRelationship5Repository nPersonRelationship5Repository;
+    private NPersonRelationship5ListRepository nPersonRelationship5ListRepository;
 
     // [TEMP] This creates nodes in both Neo4j and Arango
     public PersonNode createPerson(PersonNode personNode) {
@@ -115,6 +121,23 @@ public class PersonService {
 
     public NPersonNode4List createNPerson4List(NPersonNode4List nPersonNode4List) {
         return nPersonRelationship4ListRepository.save(nPersonNode4List);
+    }
+
+    //-------- OPTION 5
+    public NPersonNode5 getNPerson5ById(Long id) {
+        return nPersonRelationship5Repository.findNPersonNode5ById(id);
+    }
+
+    public NPersonNode5 createNPerson5List(NPersonNode5 nPersonNode5) {
+        return nPersonRelationship5Repository.save(nPersonNode5);
+    }
+
+    public NPersonNode5List getNPerson5ListById(Long id) {
+        return nPersonRelationship5ListRepository.findNPersonNode5ListById(id);
+    }
+
+    public NPersonNode5List createNPerson5List(NPersonNode5List nPersonNode5) {
+        return nPersonRelationship5ListRepository.save(nPersonNode5);
     }
 }
 

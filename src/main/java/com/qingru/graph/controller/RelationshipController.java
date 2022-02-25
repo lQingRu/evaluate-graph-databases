@@ -4,6 +4,8 @@ import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
+import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5;
+import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5List;
 import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4;
 import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4List;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
@@ -130,5 +132,19 @@ public class RelationshipController {
     public NPersonNode4List getNRelationshipsByPersonId4List(@PathVariable("id") Long id,
             @Nullable @RequestParam("degree") Integer degree) {
         return relationshipService.getNPersonRelationships4ListByPersonId(id, degree);
+    }
+
+    //-------- OPTION 5
+    @PostMapping("/neo4j/v5.1/relationship")
+    public NPersonNode5 createNRelationship5(@RequestBody NRelationshipData3 nRelationshipData) {
+        return relationshipService.createNPersonRelationship5(nRelationshipData);
+    }
+
+    // NOTE: Incomplete as conversions need to be done manually as Neo4j OGM is unable to convert List<StringValue> to List<String> itself
+    // "Could not write JSON: class org.neo4j.driver.internal.value.StringValue cannot be cast to class java.lang.String..."
+    @PostMapping("/neo4j/v5.2/relationship")
+    public NPersonNode5List createNRelationship5List(
+            @RequestBody NRelationshipData3 nRelationshipData) {
+        return relationshipService.createNPersonRelationship5List(nRelationshipData);
     }
 }
