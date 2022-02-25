@@ -4,6 +4,8 @@ import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
+import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4;
+import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4List;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
 import com.qingru.graph.domain.neo4j.optionOne.NRelationshipData1;
 import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
@@ -96,7 +98,7 @@ public class RelationshipController {
 
     //-------- OPTION 3
     @PostMapping("/neo4j/v3/relationship")
-    public NPersonNode3 createNRelationship2(@RequestBody NRelationshipData3 nRelationshipData) {
+    public NPersonNode3 createNRelationship3(@RequestBody NRelationshipData3 nRelationshipData) {
         return relationshipService.createNPersonRelationship3(nRelationshipData);
     }
 
@@ -104,5 +106,29 @@ public class RelationshipController {
     public NPersonNode3 getNRelationshipsByPersonId3(@PathVariable("id") Long id,
             @Nullable @RequestParam("degree") Integer degree) {
         return relationshipService.getNPersonRelationships3ByPersonId(id, degree);
+    }
+
+    //-------- OPTION 4
+    @PostMapping("/neo4j/v4.1/relationship")
+    public NPersonNode4 createNRelationship4(@RequestBody NRelationshipData3 nRelationshipData) {
+        return relationshipService.createNPersonRelationship4(nRelationshipData);
+    }
+
+    @GetMapping("/neo4j/v4.1/person/{id}")
+    public NPersonNode4 getNRelationshipsByPersonId4(@PathVariable("id") Long id,
+            @Nullable @RequestParam("degree") Integer degree) {
+        return relationshipService.getNPersonRelationships4ByPersonId(id, degree);
+    }
+
+    @PostMapping("/neo4j/v4.2/relationship")
+    public NPersonNode4List createNRelationship4List(
+            @RequestBody NRelationshipData3 nRelationshipData) {
+        return relationshipService.createNPersonRelationship4List(nRelationshipData);
+    }
+
+    @GetMapping("/neo4j/v4.2/person/{id}")
+    public NPersonNode4List getNRelationshipsByPersonId4List(@PathVariable("id") Long id,
+            @Nullable @RequestParam("degree") Integer degree) {
+        return relationshipService.getNPersonRelationships4ListByPersonId(id, degree);
     }
 }

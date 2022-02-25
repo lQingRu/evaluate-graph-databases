@@ -8,11 +8,17 @@ import com.qingru.graph.domain.neo4j.NPersonRelationshipEdge;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
 import com.qingru.graph.domain.neo4j.common.Source;
+import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4;
+import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4List;
+import com.qingru.graph.domain.neo4j.optionFour.NRelationshipEdge4;
+import com.qingru.graph.domain.neo4j.optionFour.NRelationshipEdge4List;
 import com.qingru.graph.domain.neo4j.optionOne.*;
 import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
 import com.qingru.graph.domain.neo4j.optionThree.NRelationshipData3;
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
 import com.qingru.graph.neo4jRepository.NPersonRelationshipRepository;
+import com.qingru.graph.neo4jRepository.optionFour.NPersonRelationship4ListRepository;
+import com.qingru.graph.neo4jRepository.optionFour.NPersonRelationship4Repository;
 import com.qingru.graph.neo4jRepository.optionOne.NPersonRelationship1Repository;
 import com.qingru.graph.neo4jRepository.optionOne.NSource1Repository;
 import com.qingru.graph.neo4jRepository.optionThree.NPersonRelationship3Repository;
@@ -48,6 +54,10 @@ public class RelationshipService {
 
     //-------- OPTION 3
     private NPersonRelationship3Repository nPersonRelationship3Repository;
+
+    //-------- OPTION 4
+    private NPersonRelationship4Repository nPersonRelationship4Repository;
+    private NPersonRelationship4ListRepository nPersonRelationship4ListRepository;
 
     public List<PersonRelationshipEdge> getPersonRelationshipsByPerson(PersonNode personNode,
             Integer degree) {
@@ -257,5 +267,59 @@ public class RelationshipService {
                                         source.getStartDate().toString())
                                 .filter(element -> element != null).collect(Collectors.toList()),
                         relationshipData.getRelationshipType());
+    }
+
+    //-------- OPTION 4
+    public NPersonNode4 getNPersonRelationships4ByPersonId(Long personId, Integer degree) {
+        if (degree == null) {
+            degree = 1;
+        }
+
+        return null;
+    }
+
+    public NPersonNode4 createNPersonRelationship4(NRelationshipData3 relationshipData) {
+        NPersonNode4 fromPersonNode = nPersonRelationship4Repository
+                .findNPersonNode4ById(relationshipData.getFromPersonId());
+        NPersonNode4 toPersonNode = nPersonRelationship4Repository
+                .findNPersonNode4ById(relationshipData.getToPersonId());
+
+        Source source = relationshipData.getRelationshipMetadata().getSource().get(0);
+        NRelationshipEdge4 edge = new NRelationshipEdge4(toPersonNode, "close", "Type", source);
+        fromPersonNode.setOutgoingRelationships(List.of(edge));
+        nPersonRelationship4Repository.save(fromPersonNode);
+        return nPersonRelationship4Repository.findNPersonNode4ById(fromPersonNode.getId());
+    }
+
+    public NPersonNode4List getNPersonRelationships4ListByPersonId(Long personId, Integer degree) {
+        if (degree == null) {
+            degree = 1;
+        }
+
+        return null;
+    }
+
+    public NPersonNode4List createNPersonRelationship4List(NRelationshipData3 relationshipData) {
+        NPersonNode4List fromPersonNode = nPersonRelationship4ListRepository
+                .findNPersonNode4ListById(relationshipData.getFromPersonId());
+        if (fromPersonNode == null) {
+            fromPersonNode =
+                    nPersonRelationship4ListRepository.findById(relationshipData.getFromPersonId())
+                            .orElseThrow(IllegalArgumentException::new);
+        }
+        NPersonNode4List toPersonNode = nPersonRelationship4ListRepository
+                .findNPersonNode4ListById(relationshipData.getToPersonId());
+        if (toPersonNode == null) {
+            toPersonNode =
+                    nPersonRelationship4ListRepository.findById(relationshipData.getToPersonId())
+                            .orElseThrow(IllegalArgumentException::new);
+        }
+        List<Source> sources = relationshipData.getRelationshipMetadata().getSource();
+        NRelationshipEdge4List edge = new NRelationshipEdge4List(toPersonNode,
+                relationshipData.getRelationshipMetadata().getCloseness(),
+                relationshipData.getRelationshipMetadata().getType(), sources);
+        fromPersonNode.setOutgoingRelationships(List.of(edge));
+        nPersonRelationship4ListRepository.save(fromPersonNode);
+        return nPersonRelationship4ListRepository.findNPersonNode4ListById(fromPersonNode.getId());
     }
 }

@@ -3,10 +3,14 @@ package com.qingru.graph.service;
 import com.qingru.graph.arangoRepository.PersonNodeRepository;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
+import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4;
+import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4List;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
 import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
 import com.qingru.graph.neo4jRepository.NPersonRelationshipRepository;
+import com.qingru.graph.neo4jRepository.optionFour.NPersonRelationship4ListRepository;
+import com.qingru.graph.neo4jRepository.optionFour.NPersonRelationship4Repository;
 import com.qingru.graph.neo4jRepository.optionOne.NPersonRelationship1Repository;
 import com.qingru.graph.neo4jRepository.optionThree.NPersonRelationship3Repository;
 import com.qingru.graph.neo4jRepository.optionTwo.NPersonRelationship2Repository;
@@ -29,6 +33,8 @@ public class PersonService {
     private NPersonRelationship1Repository nPersonRelationship1Repository;
     private NPersonRelationship2Repository nPersonRelationship2Repository;
     private NPersonRelationship3Repository nPersonRelationship3Repository;
+    private NPersonRelationship4Repository nPersonRelationship4Repository;
+    private NPersonRelationship4ListRepository nPersonRelationship4ListRepository;
 
     // [TEMP] This creates nodes in both Neo4j and Arango
     public PersonNode createPerson(PersonNode personNode) {
@@ -94,5 +100,21 @@ public class PersonService {
         return nPersonRelationship3Repository.save(nPersonNode3);
     }
 
+    //-------- OPTION 4
+    public NPersonNode4 getNPerson4ById(Long id) {
+        return nPersonRelationship4Repository.findNPersonNode4ById(id);
+    }
+
+    public NPersonNode4 createNPerson4(NPersonNode4 nPersonNode4) {
+        return nPersonRelationship4Repository.save(nPersonNode4);
+    }
+
+    public NPersonNode4List getNPerson4ListById(Long id) {
+        return nPersonRelationship4ListRepository.findNPersonNode4ListById(id);
+    }
+
+    public NPersonNode4List createNPerson4List(NPersonNode4List nPersonNode4List) {
+        return nPersonRelationship4ListRepository.save(nPersonNode4List);
+    }
 }
 

@@ -2,6 +2,8 @@ package com.qingru.graph.controller;
 
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.neo4j.common.NPersonNode;
+import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4;
+import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4List;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
 import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
@@ -75,7 +77,28 @@ public class PersonController {
     }
 
     @PostMapping("/neo4j/v3/person")
-    public NPersonNode3 createNPerson3(@RequestBody NPersonNode3 nPersonNode2) {
-        return personService.createNPerson3(nPersonNode2);
+    public NPersonNode3 createNPerson3(@RequestBody NPersonNode3 nPersonNode3) {
+        return personService.createNPerson3(nPersonNode3);
+    }
+
+    //-------- OPTION 4
+    @GetMapping("/neo4j/v4.1/person/{id}")
+    public NPersonNode4 getNPerson4ById(@PathVariable("id") Long id) {
+        return personService.getNPerson4ById(id);
+    }
+
+    @PostMapping("/neo4j/v4.1/person")
+    public NPersonNode4 createNPerson4(@RequestBody NPersonNode4 nPersonNode4) {
+        return personService.createNPerson4(nPersonNode4);
+    }
+
+    @GetMapping("/neo4j/v4.2/person/{id}")
+    public NPersonNode4List getNPerson4ListById(@PathVariable("id") Long id) {
+        return personService.getNPerson4ListById(id);
+    }
+
+    @PostMapping("/neo4j/v4.2/person")
+    public NPersonNode4List createNPerson4List(@RequestBody NPersonNode4List nPersonNode4List) {
+        return personService.createNPerson4List(nPersonNode4List);
     }
 }
