@@ -265,16 +265,39 @@ public class RelationshipService {
         return nPersonRelationship4Repository.findNPersonNode4ById(fromPersonNode.getId());
     }
 
+    public NPersonNode4List getNPersonRelationships4ByPersonId(Long personId, Integer degree) {
+        if (degree == null) {
+            degree = 1;
+        }
+        List<NPersonNode4List> allPersonNodesLinkedToPerson = nPersonRelationship4ListRepository
+                .findPersonRelationshipsWithDegree(personId, degree);
+        return !allPersonNodesLinkedToPerson.isEmpty() ?
+                allPersonNodesLinkedToPerson.stream()
+                        .filter(personNode -> personNode.getId().equals(personId)).findFirst()
+                        .orElse(null) :
+                null;
+    }
+
+    private NPersonNode4List getPersonNodeWithAllRelationships4(Long personId) {
+        List<NPersonNode4List> allPersonNodesLinkedToPerson =
+                nPersonRelationship4ListRepository.findAllPersonRelationships(personId);
+        return !allPersonNodesLinkedToPerson.isEmpty() ?
+                allPersonNodesLinkedToPerson.stream()
+                        .filter(personNode -> personNode.getId().equals(personId)).findFirst()
+                        .orElse(null) :
+                null;
+    }
+
     public NPersonNode4List createNPersonRelationship4List(NRelationshipData3 relationshipData) {
-        NPersonNode4List fromPersonNode = nPersonRelationship4ListRepository
-                .findNPersonNode4ListById(relationshipData.getFromPersonId());
+        NPersonNode4List fromPersonNode =
+                getPersonNodeWithAllRelationships4(relationshipData.getFromPersonId());
         if (fromPersonNode == null) {
             fromPersonNode =
                     nPersonRelationship4ListRepository.findById(relationshipData.getFromPersonId())
                             .orElseThrow(IllegalArgumentException::new);
         }
-        NPersonNode4List toPersonNode = nPersonRelationship4ListRepository
-                .findNPersonNode4ListById(relationshipData.getToPersonId());
+        NPersonNode4List toPersonNode =
+                getPersonNodeWithAllRelationships4(relationshipData.getToPersonId());
         if (toPersonNode == null) {
             toPersonNode =
                     nPersonRelationship4ListRepository.findById(relationshipData.getToPersonId())
@@ -287,6 +310,25 @@ public class RelationshipService {
         fromPersonNode.setOutgoingRelationships(List.of(edge));
         nPersonRelationship4ListRepository.save(fromPersonNode);
         return nPersonRelationship4ListRepository.findNPersonNode4ListById(fromPersonNode.getId());
+    }
+
+    public NPersonNode4List updateNPersonRelationship4List(Long relationshipId,
+            NRelationshipData3 relationshipData) {
+        NPersonNode4List personNode =
+                getPersonNodeWithAllRelationships4(relationshipData.getFromPersonId());
+        NRelationshipEdge4List edge = personNode.getOutgoingRelationships().stream()
+                .filter(relationship -> relationship.getId().equals(relationshipId)).findAny()
+                .get();
+        updateRelationship(edge, relationshipData);
+        nPersonRelationship4ListRepository.save(personNode);
+        return nPersonRelationship4ListRepository.findNPersonNode4ListById(personNode.getId());
+    }
+
+    private void updateRelationship(NRelationshipEdge4List oldEdge,
+            NRelationshipData3 relationshipData) {
+        oldEdge.setSources(relationshipData.getRelationshipMetadata().getSource());
+        oldEdge.setCloseness(relationshipData.getRelationshipMetadata().getCloseness());
+        oldEdge.setRelationshipType(relationshipData.getRelationshipMetadata().getType());
     }
 
     //-------- OPTION 5

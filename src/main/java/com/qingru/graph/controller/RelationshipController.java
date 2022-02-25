@@ -97,10 +97,22 @@ public class RelationshipController {
         return relationshipService.createNPersonRelationship4(nRelationshipData);
     }
 
+    @GetMapping("/neo4j/v4.2/person/{id}")
+    public NPersonNode4List getNRelationshipsByPersonId4(@PathVariable("id") Long id,
+            @Nullable @RequestParam("degree") Integer degree) {
+        return relationshipService.getNPersonRelationships4ByPersonId(id, degree);
+    }
+
     @PostMapping("/neo4j/v4.2/relationship")
     public NPersonNode4List createNRelationship4List(
             @RequestBody NRelationshipData3 nRelationshipData) {
         return relationshipService.createNPersonRelationship4List(nRelationshipData);
+    }
+
+    @PutMapping("/neo4j/v4.2/relationship/{id}")
+    public NPersonNode4List updateNRelationship4List(@PathVariable("id") Long id,
+            @RequestBody NRelationshipData3 nRelationshipData) {
+        return relationshipService.updateNPersonRelationship4List(id, nRelationshipData);
     }
 
     //-------- OPTION 5
