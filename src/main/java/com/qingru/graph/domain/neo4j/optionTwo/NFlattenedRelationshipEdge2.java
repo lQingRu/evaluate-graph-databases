@@ -17,7 +17,6 @@ public class NFlattenedRelationshipEdge2 {
     private Long id;
     private String relationshipType;
 
-    // Person node -> Person node 2 (targetPersonNode)
     @TargetNode
     private NPersonNode2 targetPersonNode;
 

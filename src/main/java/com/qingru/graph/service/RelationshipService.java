@@ -246,14 +246,6 @@ public class RelationshipService {
     }
 
     //-------- OPTION 4
-    public NPersonNode4 getNPersonRelationships4ByPersonId(Long personId, Integer degree) {
-        if (degree == null) {
-            degree = 1;
-        }
-
-        return null;
-    }
-
     public NPersonNode4 createNPersonRelationship4(NRelationshipData3 relationshipData) {
         NPersonNode4 fromPersonNode = nPersonRelationship4Repository
                 .findNPersonNode4ById(relationshipData.getFromPersonId());
@@ -273,14 +265,6 @@ public class RelationshipService {
         fromPersonNode.setOutgoingRelationships(List.of(edge));
         nPersonRelationship4Repository.save(fromPersonNode);
         return nPersonRelationship4Repository.findNPersonNode4ById(fromPersonNode.getId());
-    }
-
-    public NPersonNode4List getNPersonRelationships4ListByPersonId(Long personId, Integer degree) {
-        if (degree == null) {
-            degree = 1;
-        }
-
-        return null;
     }
 
     public NPersonNode4List createNPersonRelationship4List(NRelationshipData3 relationshipData) {

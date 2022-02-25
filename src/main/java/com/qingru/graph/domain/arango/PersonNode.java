@@ -33,7 +33,7 @@ public class PersonNode {
     private String imageUrl;
     private List<Skill> skills;
 
-    // NOTE: This will cause circular relations - Infinite loop
+    // NOTE: This may cause circular relations - Infinite loop
     //    @Relations(edges = PersonRelationshipEdge.class, lazy = true)
     //    private List<PersonNode> relations;
 
@@ -45,11 +45,5 @@ public class PersonNode {
         this.imageUrl = imageUrl;
         this.skills = skills;
         //        this.relations = new ArrayList<>();
-    }
-
-    @Override
-    public String toString() {
-        return "Person{" + "id=" + id + ", username='" + username + ", description='" + description
-                + ", age=" + age + ", imageUrl=" + imageUrl + '}';
     }
 }

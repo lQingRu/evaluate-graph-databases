@@ -32,10 +32,4 @@ public class PersonRelationshipEdge {
         this.toPersonNode = toPersonNode;
     }
 
-    @Override
-    public String toString() {
-        return "PersonRelationship{" + "id='" + id + '\'' + ", fromPerson=" + fromPersonNode
-                + ", toPerson=" + toPersonNode + ", type='" + type + '\'' + '}';
-    }
-
 }

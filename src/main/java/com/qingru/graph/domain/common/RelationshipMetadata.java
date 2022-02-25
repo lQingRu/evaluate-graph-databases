@@ -14,5 +14,5 @@ public class RelationshipMetadata {
 
     private String closeness;
     private String type;
-    private Source source; // How does person A and person B know each other?
+    private Source source;
 }

@@ -11,7 +11,6 @@ public class NFlattenedRelationshipEdge1 {
     @RelationshipId
     private Long id;
 
-    // Person node -> Source node
     @TargetNode
     private NSourceNode1 sourceNode;
 
