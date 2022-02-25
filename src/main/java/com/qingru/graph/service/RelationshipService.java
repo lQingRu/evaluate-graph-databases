@@ -128,7 +128,7 @@ public class RelationshipService {
         NFlattenedRelationshipEdge1 fromPersonNewRelation =
                 new NFlattenedRelationshipEdge1(nSourceNode1,
                         nRelationshipData1.getRelationship().getRelationshipType(),
-                        nRelationshipData1.getRelationship().getCloseness());
+                        nRelationshipData1.getRelationship().getCloseness(), nSourceNode1.getId());
         fromPersonExistingRelations.add(fromPersonNewRelation);
         fromPerson.setRelationships(fromPersonExistingRelations);
         nPersonRelationship1Repository.save(fromPerson);
@@ -138,15 +138,13 @@ public class RelationshipService {
         NFlattenedRelationshipEdge1 toPersonNewRelation =
                 new NFlattenedRelationshipEdge1(nSourceNode1,
                         nRelationshipData1.getRelationship().getRelationshipType(),
-                        nRelationshipData1.getRelationship().getCloseness());
+                        nRelationshipData1.getRelationship().getCloseness(), nSourceNode1.getId());
         toPersonExistingRelations.add(toPersonNewRelation);
         toPerson.setRelationships(toPersonExistingRelations);
         nPersonRelationship1Repository.save(toPerson);
 
-        // TODO: Return the created relationship
-        NPersonNode1 n = getPersonAndRelationshipBySourceIdAndRelationshipId(nSourceNode1.getId(),
+        return getPersonAndRelationshipBySourceIdAndRelationshipId(nSourceNode1.getId(),
                 toPersonNewRelation.getId());
-        return n;
     }
 
     private NPersonNode1 getNPersonNode1ById(Long id) {

@@ -53,7 +53,7 @@ public class NPersonRelationshipResult {
                         (LocalDateTime) sourceMap.get("startDate"));
         RelationshipMetadata relationshipMetadata = RelationshipMetadata.builder()
                 .closeness((String) relationshipMetadataMap.get("closeness")).source(source)
-                .build();
+                .type((String) relationshipMetadataMap.get("type")).build();
 
         this.fromPerson = fromPerson;
         this.toPerson = toPerson;
