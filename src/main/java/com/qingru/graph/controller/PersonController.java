@@ -1,7 +1,6 @@
 package com.qingru.graph.controller;
 
 import com.qingru.graph.domain.arango.PersonNode;
-import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5List;
 import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4;
@@ -22,7 +21,7 @@ public class PersonController {
 
     @GetMapping("/arango/{id}")
     public PersonNode getPersonById(@PathVariable("id") String id) {
-        return personService.getNPerson1ById(id);
+        return personService.getPersonById(id);
     }
 
     @PostMapping("/arango/person")
@@ -33,21 +32,6 @@ public class PersonController {
     @DeleteMapping("/arango/{id}")
     public void deletePerson(@PathVariable("id") Long id) {
         personService.deletePersonByPersonId(Long.toString(id));
-    }
-
-    @GetMapping("/neo4j/{id}")
-    public NPersonNode getNPersonById(@PathVariable("id") Long id) {
-        return personService.getNPersonById(id);
-    }
-
-    @PostMapping("/neo4j/person")
-    public NPersonNode createNPerson(@RequestBody NPersonNode nPersonNode) {
-        return personService.createNPerson(nPersonNode);
-    }
-
-    @PutMapping("/neo4j/person/{id}")
-    public NPersonNode updateNPerson(@RequestBody NPersonNode nPersonNode) {
-        return personService.updateNPerson(nPersonNode);
     }
 
     //-------- OPTION 1
@@ -119,7 +103,7 @@ public class PersonController {
     public NPersonNode5List getNPerson5ListById(@PathVariable("id") Long id) {
         return personService.getNPerson5ListById(id);
     }
-    
+
     @PostMapping("/neo4j/v5.2/person")
     public NPersonNode5List createNPerson5List(@RequestBody NPersonNode5List nPersonNode5List) {
         return personService.createNPerson5List(nPersonNode5List);

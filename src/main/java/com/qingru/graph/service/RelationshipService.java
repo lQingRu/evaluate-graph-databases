@@ -4,8 +4,6 @@ import com.qingru.graph.arangoRepository.PersonNodeRepository;
 import com.qingru.graph.arangoRepository.PersonRelationshipRepository;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
-import com.qingru.graph.domain.neo4j.NPersonRelationshipEdge;
-import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
 import com.qingru.graph.domain.neo4j.common.Source;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5;
@@ -20,7 +18,6 @@ import com.qingru.graph.domain.neo4j.optionOne.*;
 import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
 import com.qingru.graph.domain.neo4j.optionThree.NRelationshipData3;
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
-import com.qingru.graph.neo4jRepository.NPersonRelationshipRepository;
 import com.qingru.graph.neo4jRepository.optionFive.NPersonRelationship5ListRepository;
 import com.qingru.graph.neo4jRepository.optionFive.NPersonRelationship5Repository;
 import com.qingru.graph.neo4jRepository.optionFour.NPersonRelationship4ListRepository;
@@ -48,7 +45,6 @@ import java.util.stream.Collectors;
 public class RelationshipService {
 
     private PersonRelationshipRepository personRelationshipRepository;
-    private NPersonRelationshipRepository nPersonRelationshipRepository;
     private PersonNodeRepository personNodeRepository;
 
     //-------- OPTION 1
@@ -69,6 +65,7 @@ public class RelationshipService {
     private NPersonRelationship5Repository nPersonRelationship5Repository;
     private NPersonRelationship5ListRepository nPersonRelationship5ListRepository;
 
+    // Arango
     public List<PersonRelationshipEdge> getPersonRelationshipsByPerson(PersonNode personNode,
             Integer degree) {
         if (degree != null) {
@@ -98,33 +95,6 @@ public class RelationshipService {
         return personRelationshipRepository.save(relation);
     }
 
-    public List<Object> getNPersonRelationshipsByPersonId(String personId, Integer degree) {
-        if (degree != null) {
-            return nPersonRelationshipRepository
-                    .findPersonRelationshipsWithDegree(personId, degree);
-        } else {
-            return nPersonRelationshipRepository
-                    .findAllPersonRelationships(Integer.parseInt(personId));
-        }
-    }
-
-    public NPersonNode createNPersonRelationship(NRelationshipData NRelationshipData) {
-        NPersonNode fromPerson = getNPersonNodeById(NRelationshipData.getFromPersonId());
-        NPersonNode toPerson = getNPersonNodeById(NRelationshipData.getToPersonId());
-        List<NPersonRelationshipEdge> existingRelations = fromPerson.getRelations();
-        NPersonRelationshipEdge relation =
-                new NPersonRelationshipEdge(toPerson, NRelationshipData.getRelationshipType());
-        existingRelations.add(relation);
-        fromPerson.setRelations(existingRelations);
-        return nPersonRelationshipRepository.save(fromPerson);
-    }
-
-    public void updateNPersonRelationship(String relationshipId,
-            NRelationshipData NRelationshipData) {
-        nPersonRelationshipRepository.updatePersonRelationship(Integer.parseInt(relationshipId),
-                NRelationshipData.getRelationshipType());
-    }
-
     public void deletePersonRelationshipByEdgeId(String id) {
         boolean exists = personRelationshipRepository.existsById(id);
         if (exists) {
@@ -141,11 +111,7 @@ public class RelationshipService {
         }
     }
 
-    private NPersonNode getNPersonNodeById(Long id) {
-        return nPersonRelationshipRepository.findNPersonNodesById(id).orElseThrow(
-                () -> new IllegalArgumentException(String.format("No person of id: %l", id)));
-    }
-
+    // Neo4j
     //-------- OPTION 1
     public NPersonNode1 createPersonRelationship1(NRelationshipData1 nRelationshipData1) {
         // Check if person A and B exist

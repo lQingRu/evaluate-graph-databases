@@ -2,7 +2,6 @@ package com.qingru.graph.controller;
 
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
-import com.qingru.graph.domain.neo4j.common.NPersonNode;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5List;
@@ -32,7 +31,7 @@ public class RelationshipController {
     @GetMapping("/arango/person/{id}")
     public List<PersonRelationshipEdge> getRelationshipsByPersonId(@PathVariable("id") String id,
             @Nullable @RequestParam("degree") Integer degree) {
-        PersonNode personNode = personService.getNPerson1ById(id);
+        PersonNode personNode = personService.getPersonById(id);
         List<PersonRelationshipEdge> edges =
                 relationshipService.getPersonRelationshipsByPerson(personNode, degree);
         return edges;
@@ -47,24 +46,6 @@ public class RelationshipController {
     @DeleteMapping("/arango/relationship/{id}")
     public void removeRelationshipByEdgeId(@PathVariable("id") String id) {
         relationshipService.deletePersonRelationshipByEdgeId(id);
-    }
-
-    @GetMapping("/neo4j/person/{id}")
-    public List<Object> getNRelationshipsByPersonId(@PathVariable("id") String id,
-            @Nullable @RequestParam("degree") Integer degree) {
-        List<Object> edges = relationshipService.getNPersonRelationshipsByPersonId(id, degree);
-        return edges;
-    }
-
-    @PostMapping("/neo4j")
-    public NPersonNode createNRelationship(@RequestBody NRelationshipData NRelationshipData) {
-        return relationshipService.createNPersonRelationship(NRelationshipData);
-    }
-
-    @PutMapping("/neo4j/relationship/{id}")
-    public void updateNRelationship(@PathVariable("id") String id,
-            @RequestBody NRelationshipData NRelationshipData) {
-        relationshipService.updateNPersonRelationship(id, NRelationshipData);
     }
 
     //-------- OPTION 1
