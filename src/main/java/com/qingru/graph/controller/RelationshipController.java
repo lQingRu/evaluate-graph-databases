@@ -7,6 +7,7 @@ import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5List;
 import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4;
 import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4List;
+import com.qingru.graph.domain.neo4j.optionFour.NRelationshipEdge4ListFilter;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
 import com.qingru.graph.domain.neo4j.optionOne.NRelationshipData1;
 import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
@@ -101,6 +102,22 @@ public class RelationshipController {
     public NPersonNode4List getNRelationshipsByPersonId4(@PathVariable("id") Long id,
             @Nullable @RequestParam("degree") Integer degree) {
         return relationshipService.getNPersonRelationships4ByPersonId(id, degree);
+    }
+
+    @GetMapping("/neo4j/v4.2/person/{id}/filter")
+    public NPersonNode4List getNRelationshipsByPersonId4WithFiltersM1(@PathVariable("id") Long id,
+            @Nullable @RequestParam("degree") Integer degree,
+            @RequestBody NRelationshipEdge4ListFilter filter) {
+        return relationshipService
+                .getNPersonRelationships4ByPersonIdWithFilterM1(id, degree, filter);
+    }
+
+    @GetMapping("/neo4j/v4.2/person/{id}/filter2")
+    public NPersonNode4List getNRelationshipsByPersonId4WithFiltersM2(@PathVariable("id") Long id,
+            @Nullable @RequestParam("degree") Integer degree,
+            @RequestBody NRelationshipEdge4ListFilter filter) {
+        return relationshipService
+                .getNPersonRelationships4ByPersonIdWithFilterM2(id, degree, filter);
     }
 
     @PostMapping("/neo4j/v4.2/relationship")

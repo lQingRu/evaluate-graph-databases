@@ -16,5 +16,5 @@ public class RelationshipMetadata3 {
 
     private String closeness;
     private String type;
-    private List<Source> source;
+    private List<Source> sources;
 }

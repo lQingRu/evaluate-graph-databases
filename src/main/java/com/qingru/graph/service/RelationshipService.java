@@ -10,10 +10,7 @@ import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5List;
 import com.qingru.graph.domain.neo4j.optionFive.NRelationshipEdge5;
 import com.qingru.graph.domain.neo4j.optionFive.NRelationshipEdge5List;
-import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4;
-import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4List;
-import com.qingru.graph.domain.neo4j.optionFour.NRelationshipEdge4;
-import com.qingru.graph.domain.neo4j.optionFour.NRelationshipEdge4List;
+import com.qingru.graph.domain.neo4j.optionFour.*;
 import com.qingru.graph.domain.neo4j.optionOne.*;
 import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
 import com.qingru.graph.domain.neo4j.optionThree.NRelationshipData3;
@@ -26,17 +23,20 @@ import com.qingru.graph.neo4jRepository.optionOne.NPersonRelationship1Repository
 import com.qingru.graph.neo4jRepository.optionOne.NSource1Repository;
 import com.qingru.graph.neo4jRepository.optionThree.NPersonRelationship3Repository;
 import com.qingru.graph.neo4jRepository.optionTwo.NPersonRelationship2Repository;
+import com.qingru.graph.util.neo4j.Neo4jQueryHelper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Session;
 import org.neo4j.driver.internal.value.MapValue;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.neo4j.driver.Values.parameters;
 
 @Service
 @Slf4j
@@ -64,6 +64,8 @@ public class RelationshipService {
     //-------- OPTION 5
     private NPersonRelationship5Repository nPersonRelationship5Repository;
     private NPersonRelationship5ListRepository nPersonRelationship5ListRepository;
+
+    private Driver neo4jDriver;
 
     // Arango
     public List<PersonRelationshipEdge> getPersonRelationshipsByPerson(PersonNode personNode,
@@ -224,7 +226,7 @@ public class RelationshipService {
     }
 
     public NPersonNode3 createNPersonRelationship3(NRelationshipData3 relationshipData) {
-        List<Source> sources = relationshipData.getRelationshipMetadata().getSource();
+        List<Source> sources = relationshipData.getRelationshipMetadata().getSources();
 
         return nPersonRelationship3Repository
                 .createOutgoingRelationship(relationshipData.getFromPersonId(),
@@ -258,7 +260,7 @@ public class RelationshipService {
             toPersonNode = nPersonRelationship4Repository.findById(relationshipData.getToPersonId())
                     .orElseThrow(IllegalArgumentException::new);
         }
-        Source source = relationshipData.getRelationshipMetadata().getSource().get(0);
+        Source source = relationshipData.getRelationshipMetadata().getSources().get(0);
         NRelationshipEdge4 edge = new NRelationshipEdge4(toPersonNode, "close", "Type", source);
         fromPersonNode.setOutgoingRelationships(List.of(edge));
         nPersonRelationship4Repository.save(fromPersonNode);
@@ -277,6 +279,80 @@ public class RelationshipService {
                         .orElse(null) :
                 null;
     }
+
+    // Method 1: Using Neo4j Driver to construct dynamic query string
+    public NPersonNode4List getNPersonRelationships4ByPersonIdWithFilterM1(Long personId,
+            Integer degree, NRelationshipEdge4ListFilter filter) {
+        if (degree == null) {
+            degree = 1;
+        }
+        try (Session session = neo4jDriver.session()) {
+            String returnStatement = "RETURN subject, collect(predicate), collect(object)";
+            String baseQuery = "MATCH (p:person4List)\n" + "WHERE ID(p)=$id\n"
+                    + "CALL apoc.path.expandConfig(p, {\n"
+                    + "relationshipFilter: \"metadataRelations\",\n" + "minLevel:1,\n"
+                    + "maxLevel: $degree,\n" + "uniqueness: \"RELATIONSHIP_GLOBAL\" \n" + "})\n"
+                    + "YIELD path\n" + "WITH apoc.path.elements(path) AS elements \n"
+                    + "UNWIND range(0, size(elements)-2) AS index \n" + "WITH elements, index\n"
+                    + "WHERE index %2 = 0 \n"
+                    + "WITH distinct  elements[index] AS subject, elements[index+1] AS predicate, elements[index+2] AS object \n";
+            Record record;
+            // Check if any filters applied
+            // Assumes hasNext() = true
+            if (filter == null) {
+                record = session.run(baseQuery + returnStatement,
+                        parameters("id", personId, "degree", degree)).next();
+            } else {
+                String filterQuery = "WHERE ";
+                Stack<String> filterStrings = new Stack<>();
+                if (!filter.getCloseness().isEmpty()) {
+                    filterStrings.add(Neo4jQueryHelper
+                            .singleValuedEdgeFilter("closeness", filter.getCloseness()));
+                }
+                if (!filter.getRelationshipTypes().isEmpty()) {
+                    filterStrings.add(Neo4jQueryHelper.singleValuedEdgeFilter("relationshipType",
+                            filter.getRelationshipTypes()));
+                }
+                if (!filter.getSourceTypes().isEmpty()) {
+                    filterStrings.add(Neo4jQueryHelper
+                            .multiValuedEdgeFilter("sources.types", filter.getSourceTypes()));
+                }
+                // To check all the other properties ...
+                while (filterStrings.size() > 1) {
+                    filterQuery = filterQuery + filterStrings.pop() + " AND ";
+                }
+                filterQuery = filterQuery + filterStrings.pop();
+                record = session.run(baseQuery + filterQuery + "\n" + returnStatement,
+                        parameters("id", personId, "degree", degree)).next();
+            }
+            NPersonNode4List mapped = mapToPojo(record);
+            return mapped;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // Method 2: Passing in each filter as a property to repository because Neo4j does not take in map in cypher queries
+    public NPersonNode4List getNPersonRelationships4ByPersonIdWithFilterM2(Long personId,
+            Integer degree, NRelationshipEdge4ListFilter filter) {
+        List<NPersonNode4List> allPersonNodesLinkedToPerson = nPersonRelationship4ListRepository
+                .findPersonRelationshipsWithDegreeWithFilter(personId, degree,
+                        filter.getCloseness().isEmpty() ? null : filter.getCloseness(),
+                        filter.getSourceTypes().isEmpty() ? null : filter.getSourceTypes());
+        return !allPersonNodesLinkedToPerson.isEmpty() ?
+                allPersonNodesLinkedToPerson.stream()
+                        .filter(personNode -> personNode.getId().equals(personId)).findFirst()
+                        .orElse(null) :
+                null;
+    }
+
+    private NPersonNode4List mapToPojo(Record record) {
+        NPersonNode4List nPersonNode4List = new NPersonNode4List();
+        nPersonNode4List.setUsername(record.get(0).get("username").asString());
+        // ... have to slowly get the relationships (casting) and construct own NRelationshipEdge4List POJO etc
+        return nPersonNode4List;
+    }
+
 
     private NPersonNode4List getPersonNodeWithAllRelationships4(Long personId) {
         List<NPersonNode4List> allPersonNodesLinkedToPerson =
@@ -303,7 +379,7 @@ public class RelationshipService {
                     nPersonRelationship4ListRepository.findById(relationshipData.getToPersonId())
                             .orElseThrow(IllegalArgumentException::new);
         }
-        List<Source> sources = relationshipData.getRelationshipMetadata().getSource();
+        List<Source> sources = relationshipData.getRelationshipMetadata().getSources();
         NRelationshipEdge4List edge = new NRelationshipEdge4List(toPersonNode,
                 relationshipData.getRelationshipMetadata().getCloseness(),
                 relationshipData.getRelationshipMetadata().getType(), sources);
@@ -319,6 +395,7 @@ public class RelationshipService {
         NRelationshipEdge4List edge = personNode.getOutgoingRelationships().stream()
                 .filter(relationship -> relationship.getId().equals(relationshipId)).findAny()
                 .get();
+        // simply replacing the whole edge with same relationship id does not work on .save(), have to update on the retrieved relationship edge
         updateRelationship(edge, relationshipData);
         nPersonRelationship4ListRepository.save(personNode);
         return nPersonRelationship4ListRepository.findNPersonNode4ListById(personNode.getId());
@@ -326,7 +403,7 @@ public class RelationshipService {
 
     private void updateRelationship(NRelationshipEdge4List oldEdge,
             NRelationshipData3 relationshipData) {
-        oldEdge.setSources(relationshipData.getRelationshipMetadata().getSource());
+        oldEdge.setSources(relationshipData.getRelationshipMetadata().getSources());
         oldEdge.setCloseness(relationshipData.getRelationshipMetadata().getCloseness());
         oldEdge.setRelationshipType(relationshipData.getRelationshipMetadata().getType());
     }
@@ -346,7 +423,7 @@ public class RelationshipService {
             toPersonNode = nPersonRelationship5Repository.findById(relationshipData.getToPersonId())
                     .orElseThrow(IllegalArgumentException::new);
         }
-        Source source = relationshipData.getRelationshipMetadata().getSource().get(0);
+        Source source = relationshipData.getRelationshipMetadata().getSources().get(0);
         NRelationshipEdge5 edge = new NRelationshipEdge5(toPersonNode, "close", "Type", source);
         fromPersonNode.setOutgoingRelationships(List.of(edge));
         nPersonRelationship5Repository.save(fromPersonNode);
@@ -368,7 +445,7 @@ public class RelationshipService {
                     nPersonRelationship5ListRepository.findById(relationshipData.getToPersonId())
                             .orElseThrow(IllegalArgumentException::new);
         }
-        List<Source> sources = relationshipData.getRelationshipMetadata().getSource();
+        List<Source> sources = relationshipData.getRelationshipMetadata().getSources();
         NRelationshipEdge5List edge = new NRelationshipEdge5List(toPersonNode,
                 relationshipData.getRelationshipMetadata().getCloseness(),
                 relationshipData.getRelationshipMetadata().getType(), sources);
