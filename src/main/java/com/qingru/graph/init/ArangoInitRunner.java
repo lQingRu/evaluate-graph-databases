@@ -1,7 +1,7 @@
 package com.qingru.graph.init;
 
-import com.qingru.graph.arangoRepository.PersonNodeRepository;
-import com.qingru.graph.arangoRepository.PersonRelationshipRepository;
+import com.qingru.graph.repository.arangoRepository.PersonNodeRepository;
+import com.qingru.graph.repository.arangoRepository.PersonRelationshipRepository;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
 import com.qingru.graph.domain.common.Skill;

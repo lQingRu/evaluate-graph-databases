@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 
 @Configuration
-@EnableNeo4jRepositories(basePackages = {"com.qingru.graph.neo4jRepository"})
+@EnableNeo4jRepositories(basePackages = {"com.qingru.graph.repository.neo4jRepository"})
 public class Neo4jConfig {
 
     @Bean

@@ -1,4 +1,4 @@
-package com.qingru.graph.neo4jRepository.optionTwo;
+package com.qingru.graph.repository.neo4jRepository.optionTwo;
 
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
 import org.springframework.data.neo4j.repository.Neo4jRepository;

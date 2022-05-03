@@ -6,7 +6,7 @@ import com.arangodb.springframework.config.ArangoConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableArangoRepositories(basePackages = {"com.qingru.graph.arangoRepository"})
+@EnableArangoRepositories(basePackages = {"com.qingru.graph.repository.arangoRepository"})
 public class ArangoConfig implements ArangoConfiguration {
     @Override
     public ArangoDB.Builder arango() {

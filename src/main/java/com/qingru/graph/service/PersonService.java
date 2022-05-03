@@ -1,6 +1,6 @@
 package com.qingru.graph.service;
 
-import com.qingru.graph.arangoRepository.PersonNodeRepository;
+import com.qingru.graph.repository.arangoRepository.PersonNodeRepository;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5List;
@@ -9,13 +9,13 @@ import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4List;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
 import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
 import com.qingru.graph.domain.neo4j.optionTwo.NPersonNode2;
-import com.qingru.graph.neo4jRepository.optionFive.NPersonRelationship5ListRepository;
-import com.qingru.graph.neo4jRepository.optionFive.NPersonRelationship5Repository;
-import com.qingru.graph.neo4jRepository.optionFour.NPersonRelationship4ListRepository;
-import com.qingru.graph.neo4jRepository.optionFour.NPersonRelationship4Repository;
-import com.qingru.graph.neo4jRepository.optionOne.NPersonRelationship1Repository;
-import com.qingru.graph.neo4jRepository.optionThree.NPersonRelationship3Repository;
-import com.qingru.graph.neo4jRepository.optionTwo.NPersonRelationship2Repository;
+import com.qingru.graph.repository.neo4jRepository.optionFive.NPersonRelationship5ListRepository;
+import com.qingru.graph.repository.neo4jRepository.optionFive.NPersonRelationship5Repository;
+import com.qingru.graph.repository.neo4jRepository.optionFour.NPersonRelationship4ListRepository;
+import com.qingru.graph.repository.neo4jRepository.optionFour.NPersonRelationship4Repository;
+import com.qingru.graph.repository.neo4jRepository.optionOne.NPersonRelationship1Repository;
+import com.qingru.graph.repository.neo4jRepository.optionThree.NPersonRelationship3Repository;
+import com.qingru.graph.repository.neo4jRepository.optionTwo.NPersonRelationship2Repository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

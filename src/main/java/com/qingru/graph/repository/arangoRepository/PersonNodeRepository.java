@@ -1,4 +1,4 @@
-package com.qingru.graph.arangoRepository;
+package com.qingru.graph.repository.arangoRepository;
 
 import com.arangodb.springframework.repository.ArangoRepository;
 import com.qingru.graph.domain.arango.PersonNode;
