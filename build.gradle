@@ -1,18 +1,14 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.2'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'org.springframework.boot' version '2.6.7'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id "org.jetbrains.kotlin.plugin.spring" version "1.6.21"
+    id 'org.jetbrains.kotlin.jvm' version '1.6.21'
 }
 
 group = 'com.qingru'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
 
 repositories {
     mavenCentral()
@@ -20,24 +16,49 @@ repositories {
 
 dependencies {
     // Databases
-    implementation group: 'org.springframework.data', name: 'spring-data-neo4j', version: '6.2.0'
-    implementation group: 'com.arangodb', name: 'arangodb-spring-boot-starter', version: '2.3.3.RELEASE'
+    implementation group: 'org.springframework.data', name: 'spring-data-neo4j'
+    implementation group: 'com.arangodb', name: 'arangodb-spring-boot-starter'
 
     // Annotations
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
     // SpringBoot
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.6.2'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.5.3'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.6.2'
-
+    implementation group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
 
     // Tests
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
 
+dependencyManagement {
+    dependencies {
+        dependency group:'com.arangodb', name:'arangodb-spring-boot-starter', version:'2.3.3.RELEASE'
+    }
 }
 
 test {
     useJUnitPlatform()
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/java'
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
