@@ -1,7 +1,12 @@
-# Evaluating between Arango and Neo4j Graph Databases
+# Evaluation of Graph Databases
+
 ## Introduction
-- This repository aims to do a targeted POC on Arango and Neo4j as a Graph data store
+- This repository aims to do a targeted POC on Arango, Neo4j and TigerGraph as a Graph data store
 - Gitlab wiki pages (as listed in 'Content' section) consists of the key notes for this POC
+
+## Team Composition
+Evaluating Lead - Qing Ru
+
 
 ## Content 
 Gitlab wiki pages in this repository consists of: 

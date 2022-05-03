@@ -5,8 +5,8 @@ services:
     container_name: neo4j
     restart: unless-stopped
     ports:
-      - 7474:7474
-      - 7687:7687
+      - "7474:7474"
+      - "7687:7687"
     environment:
       - NEO4J_AUTH=neo4j/password
       - NEO4J_apoc_export_file_enabled=true
@@ -17,6 +17,17 @@ services:
     image: arangodb:3.8.4
     container_name: arango
     ports:
-      - 8529:8529
+      - "8529:8529"
     environment:
       - ARANGO_ROOT_PASSWORD=password
+  tigergraph:
+    image: docker.tigergraph.com/tigergraph:latest
+    container_name: tigergraph
+    ports:
+      - "14022:22"
+      - "9000:9000"
+      - "14240:14240"
+    ulimits:
+      nofile:
+        soft: 1000000
+        hard: 1000000
