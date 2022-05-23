@@ -4,37 +4,39 @@ import com.arangodb.springframework.annotation.Edge;
 import com.arangodb.springframework.annotation.From;
 import com.arangodb.springframework.annotation.To;
 import com.qingru.graph.domain.common.RelationshipMetadata;
+import com.qingru.graph.domain.neo4j.optionThree.RelationshipMetadata3;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
-@Edge("personRelationship")
+@Edge("commsRelationship")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PersonRelationshipEdge {
+public class CommsRelationshipEdge {
 
     @Id
     private String id;
     @From
-    private PersonNode fromPersonNode;
+    private CommsNode fromCommsNode;
 
     @To
     private PersonNode toPersonNode;
 
     private String type;
 
-    private RelationshipMetadata relationshipMetadata;
+    private RelationshipMetadata3 relationshipMetadata;
 
-    public PersonRelationshipEdge(PersonNode fromPersonNode, PersonNode toPersonNode) {
-        this.fromPersonNode = fromPersonNode;
+    public CommsRelationshipEdge(CommsNode fromCommsNode, PersonNode toPersonNode, String type) {
+        this.fromCommsNode = fromCommsNode;
         this.toPersonNode = toPersonNode;
+        this.type=type;
     }
 
-    public PersonRelationshipEdge(PersonNode fromPersonNode, PersonNode toPersonNode, String type,
-            RelationshipMetadata relationshipMetadata) {
-        this.fromPersonNode = fromPersonNode;
+    public CommsRelationshipEdge(CommsNode fromCommsNode, PersonNode toPersonNode, String type,
+            RelationshipMetadata3 relationshipMetadata) {
+        this.fromCommsNode = fromCommsNode;
         this.toPersonNode = toPersonNode;
         this.type = type;
         this.relationshipMetadata = relationshipMetadata;

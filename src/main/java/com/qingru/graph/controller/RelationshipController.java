@@ -1,13 +1,12 @@
 package com.qingru.graph.controller;
 
+import com.qingru.graph.domain.arango.CommsRelationshipEdge;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
 import com.qingru.graph.domain.neo4j.common.NRelationshipData;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5;
 import com.qingru.graph.domain.neo4j.optionFive.NPersonNode5List;
-import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4;
-import com.qingru.graph.domain.neo4j.optionFour.NPersonNode4List;
-import com.qingru.graph.domain.neo4j.optionFour.NRelationshipEdge4ListFilter;
+import com.qingru.graph.domain.neo4j.optionFour.*;
 import com.qingru.graph.domain.neo4j.optionOne.NPersonNode1;
 import com.qingru.graph.domain.neo4j.optionOne.NRelationshipData1;
 import com.qingru.graph.domain.neo4j.optionThree.NPersonNode3;
@@ -47,6 +46,18 @@ public class RelationshipController {
     @DeleteMapping("/arango/relationship/{id}")
     public void removeRelationshipByEdgeId(@PathVariable("id") String id) {
         relationshipService.deletePersonRelationshipByEdgeId(id);
+    }
+
+    @GetMapping("/arango/commsRelationship/{id}")
+    public List<CommsRelationshipEdge> getCommsRelationshipByCommsId(
+            @PathVariable("id") String id) {
+        return relationshipService.getCommsRelationshipsById(id, 2);
+    }
+
+    @PostMapping("/arango/commsRelationship")
+    public CommsRelationshipEdge createCommsRelationship(
+            @RequestBody NCommsRelationshipData4 nCommsRelationshipData4) {
+        return relationshipService.createCommsRelationship(nCommsRelationshipData4);
     }
 
     //-------- OPTION 1
@@ -108,16 +119,16 @@ public class RelationshipController {
     public NPersonNode4List getNRelationshipsByPersonId4WithFiltersM1(@PathVariable("id") Long id,
             @Nullable @RequestParam("degree") Integer degree,
             @RequestBody NRelationshipEdge4ListFilter filter) {
-        return relationshipService
-                .getNPersonRelationships4ByPersonIdWithFilterM1(id, degree, filter);
+        return relationshipService.getNPersonRelationships4ByPersonIdWithFilterM1(id, degree,
+                filter);
     }
 
     @GetMapping("/neo4j/v4.2/person/{id}/filter2")
     public NPersonNode4List getNRelationshipsByPersonId4WithFiltersM2(@PathVariable("id") Long id,
             @Nullable @RequestParam("degree") Integer degree,
             @RequestBody NRelationshipEdge4ListFilter filter) {
-        return relationshipService
-                .getNPersonRelationships4ByPersonIdWithFilterM2(id, degree, filter);
+        return relationshipService.getNPersonRelationships4ByPersonIdWithFilterM2(id, degree,
+                filter);
     }
 
     @PostMapping("/neo4j/v4.2/relationship")
@@ -130,6 +141,21 @@ public class RelationshipController {
     public NPersonNode4List updateNRelationship4List(@PathVariable("id") Long id,
             @RequestBody NRelationshipData3 nRelationshipData) {
         return relationshipService.updateNPersonRelationship4List(id, nRelationshipData);
+    }
+
+    @PostMapping("/neo4j/v4.3/commsRelationship")
+    public NCommsNode4List createNCommsRelationship4List(
+            @RequestBody NCommsRelationshipData4 nCommsRelationshipData4) {
+        return relationshipService.createNCommsRelationship4(nCommsRelationshipData4);
+    }
+
+    @GetMapping("/neo4j/v4.3/commsRelationship/traverse/{id}")
+    public List<NodesAndRelationships> getPersonCommsTraversal(@PathVariable("id") int id,
+            @Nullable @RequestParam("degree") Integer degree) {
+        if (degree == null) {
+            return relationshipService.getPersonCommsTraversalPathsByPersonId(id, 1);
+        }
+        return relationshipService.getPersonCommsTraversalPathsByPersonId(id, degree);
     }
 
     //-------- OPTION 5

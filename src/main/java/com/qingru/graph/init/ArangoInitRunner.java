@@ -4,7 +4,8 @@ import com.qingru.graph.arangoRepository.PersonNodeRepository;
 import com.qingru.graph.arangoRepository.PersonRelationshipRepository;
 import com.qingru.graph.domain.arango.PersonNode;
 import com.qingru.graph.domain.arango.PersonRelationshipEdge;
-import com.qingru.graph.domain.common.Skill;
+import com.qingru.graph.domain.common.RelationshipMetadata;
+import com.qingru.graph.domain.neo4j.common.Source;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -45,31 +46,45 @@ public class ArangoInitRunner implements CommandLineRunner {
     }
 
     private List<PersonNode> createPersonCollection() {
-        return List.of(new PersonNode("John Doe", "Main Character", 40, "",
-                        List.of(new Skill("Kayaking", "Open-sea", 3, "Sports"),
-                                new Skill("Baking", "Keto Desserts", 5, "Cooking"))),
-                new PersonNode("Johnny", "John Doe's friend", 35, "",
-                        List.of(new Skill("Baking", "All sort of desserts", 8, "Cooking"))),
-                new PersonNode("Jane", "John's wife", 34, "",
-                        List.of(new Skill("Dancing", "Jazz", 6, "Sports"))),
-                new PersonNode("Robb", "Random Guy", 30, "", List.of()),
-                new PersonNode("Bran", "Random Guy 2", 28, "", List.of()));
+        return List.of(new PersonNode("Janice", "Blond girl", 33),
+                new PersonNode("Tim", "Blond guy", 40), new PersonNode("Hally", "Cheerful", 33),
+                new PersonNode("Jess", "Cheerful", 33));
     }
 
     private void createPersonRelationshipEdgeCollection() {
-        personNodeRepository.findByUsername("John Doe").ifPresent(john -> {
-            personNodeRepository.findByUsername("Johnny").ifPresent(johnny -> {
-                personNodeRepository.findByUsername("Jane").ifPresent(
-                        jane -> personRelationshipRepository.saveAll(
-                                List.of(new PersonRelationshipEdge(john, johnny),
-                                        new PersonRelationshipEdge(john, jane),
-                                        new PersonRelationshipEdge(jane, johnny))));
-                personNodeRepository.findByUsername("Bran").ifPresent(
-                        bran -> personRelationshipRepository
-                                .saveAll(List.of(new PersonRelationshipEdge(bran, john))));
-                personNodeRepository.findByUsername("Robb").ifPresent(
-                        robb -> personRelationshipRepository
-                                .saveAll(List.of(new PersonRelationshipEdge(johnny, robb))));
+        personNodeRepository.findByUsername("Janice").ifPresent(janice -> {
+            personNodeRepository.findByUsername("Tim").ifPresent(tim -> {
+                personNodeRepository.findByUsername("Jess").ifPresent(jess -> {
+                    personNodeRepository.findByUsername("Hally").ifPresent(hally -> {
+                        personRelationshipRepository.saveAll(
+                                List.of(new PersonRelationshipEdge(janice, tim, "sister_of",
+                                                new RelationshipMetadata("very_close", "family",
+                                                        new Source("family", "bloodline", null))),
+                                        new PersonRelationshipEdge(janice, jess, "friend_of",
+                                                new RelationshipMetadata("close", "school_friend",
+                                                        new Source("social_media",
+                                                                "facebook friend list", null)))));
+                        personRelationshipRepository.saveAll(
+                                List.of(new PersonRelationshipEdge(jess, janice, "friend_of",
+                                        new RelationshipMetadata("close", "school_friend",
+                                                new Source("social_media", "facebook friend list",
+                                                        null)))));
+                        personRelationshipRepository.saveAll(
+                                List.of(new PersonRelationshipEdge(tim, janice, "brother_of",
+                                        new RelationshipMetadata("very_close", "family",
+                                                new Source("family", "bloodline", null)))));
+                        personRelationshipRepository.saveAll(
+                                List.of(new PersonRelationshipEdge(hally, jess, "friend_of",
+                                        new RelationshipMetadata("very_close", "childhood_friend",
+                                                new Source("social_media", "facebook wall post",
+                                                        null)))));
+                        personRelationshipRepository.saveAll(
+                                List.of(new PersonRelationshipEdge(jess, hally, "friend_of",
+                                        new RelationshipMetadata("very_close", "childhood_friend",
+                                                new Source("social_media", "facebook wall post",
+                                                        null)))));
+                    });
+                });
             });
         });
     }

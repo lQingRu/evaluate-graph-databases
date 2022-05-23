@@ -11,27 +11,21 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.util.List;
 
-@Node("person4")
+@Node("comms4")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NPersonNode4 {
+public class NCommsNode4List {
 
     @Id
     @GeneratedValue
     private Long id;
-    private String username;
-    private Integer age;
-    private String description;
-    private String imageUrl;
-    @Relationship(type = "metadataRelations", direction = Relationship.Direction.OUTGOING)
-    private List<NRelationshipEdge4> outgoingPersonRelationships;
-    @Relationship(type = "metadataRelations", direction = Relationship.Direction.INCOMING)
-    private List<NRelationshipEdge4> incomingPersonRelationships;
-
+    private String name;
+    private String value;
+    private String type;
     @Relationship(type = "commsRelations", direction = Relationship.Direction.OUTGOING)
-    private List<NPersonCommsEdge4> outgoingCommsRelationships;
+    private List<NCommsEdge4> outgoingRelationships;
     @Relationship(type = "commsRelations", direction = Relationship.Direction.INCOMING)
-    private List<NCommsEdge4> incomingCommsRelationships;
+    private List<NCommsEdge4> incomingRelationships;
 }

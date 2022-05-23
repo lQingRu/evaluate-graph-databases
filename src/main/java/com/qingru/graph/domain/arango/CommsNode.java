@@ -4,19 +4,22 @@ import com.arangodb.springframework.annotation.ArangoId;
 import com.arangodb.springframework.annotation.Document;
 import com.arangodb.springframework.annotation.PersistentIndex;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.qingru.graph.domain.neo4j.optionFour.NCommsEdge4;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.neo4j.core.schema.Relationship;
 
-@Document("person")
+import java.util.List;
+
+@Document("comms")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@PersistentIndex(fields = {"username", "id"})
-public class PersonNode {
+public class CommsNode {
 
     @Id
     private String id;
@@ -24,18 +27,13 @@ public class PersonNode {
     @JsonIgnore
     private String arangoId;
 
-    private String username;
-    private int age;
-    private String description;
+    private String name;
+    private String value;
+    private String type;
 
-    // NOTE: This may cause circular relations - Infinite loop
-    //    @Relations(edges = PersonRelationshipEdge.class, lazy = true)
-    //    private List<PersonNode> relations;
-
-    public PersonNode(String username, String description, int age) {
-        this.description = description;
-        this.username = username;
-        this.age = age;
-        //        this.relations = new ArrayList<>();
+    public CommsNode(String name, String value, String type) {
+        this.name = name;
+        this.value = value;
+        this.type = type;
     }
 }
